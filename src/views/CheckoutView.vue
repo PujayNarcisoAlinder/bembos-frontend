@@ -8,40 +8,41 @@
     </header>
 
     <main class="max-w-3xl mx-auto p-4 md:p-6 space-y-6">
+      <!-- Resumen -->
       <div class="bg-white rounded-2xl p-5 shadow-sm">
         <h2 class="font-bold text-lg mb-3 text-gray-900">Resumen del pedido</h2>
         <div v-for="item in cartStore.items" :key="item.id" class="flex justify-between text-sm mb-2 text-gray-700">
           <span>{{ item.quantity }} x {{ item.name }}</span>
           <span class="font-semibold">S/{{ (item.price * item.quantity).toFixed(2) }}</span>
         </div>
-        <button class="text-bembos-red text-sm font-bold mt-2 hover:underline focus:ring-2 focus:ring-red-300 rounded">Editar pedido</button>
       </div>
 
+      <!-- Entrega -->
       <div class="bg-white rounded-2xl p-5 shadow-sm">
         <h2 class="font-bold text-lg mb-3 text-gray-900">Método de entrega</h2>
         <div class="flex gap-3 mb-5">
           <button @click="tipoEntrega = 'delivery'" :class="['flex-1 border-2 rounded-xl p-4 flex items-center justify-center gap-2 text-sm font-semibold transition min-h-[52px]', tipoEntrega === 'delivery' ? 'bg-yellow-50 border-bembos-yellow text-bembos-black' : 'border-gray-300 text-gray-700 hover:bg-gray-50']">
-            <CheckCircle v-if="tipoEntrega === 'delivery'" class="w-5 h-5" aria-hidden="true" /> Delivery
+            Delivery
           </button>
           <button @click="tipoEntrega = 'local'" :class="['flex-1 border-2 rounded-xl p-4 flex items-center justify-center gap-2 text-sm font-semibold transition min-h-[52px]', tipoEntrega === 'local' ? 'bg-yellow-50 border-bembos-yellow text-bembos-black' : 'border-gray-300 text-gray-700 hover:bg-gray-50']">
-            <CheckCircle v-if="tipoEntrega === 'local'" class="w-5 h-5" aria-hidden="true" /> Recojo en local
+            Recojo en local
           </button>
         </div>
 
         <div v-if="tipoEntrega === 'delivery'" class="space-y-4">
           <div>
-            <label for="nombre-delivery" class="text-sm font-bold text-gray-800">Nombre <span class="text-red-500" aria-hidden="true">*</span></label>
+            <label for="nombre-delivery" class="text-sm font-bold text-gray-800">Nombre <span class="text-red-500">*</span></label>
             <input id="nombre-delivery" v-model="nombre" autocomplete="name" aria-required="true" class="w-full border-2 border-gray-300 rounded-lg p-3 text-base mt-1 outline-none focus:border-bembos-blue focus:ring-2 focus:ring-blue-200" placeholder="Ej. Frank Vidal" />
           </div>
           <div>
-            <label for="direccion-delivery" class="text-sm font-bold text-gray-800">Dirección de entrega <span class="text-red-500" aria-hidden="true">*</span></label>
+            <label for="direccion-delivery" class="text-sm font-bold text-gray-800">Dirección de entrega <span class="text-red-500">*</span></label>
             <input id="direccion-delivery" v-model="direccion" autocomplete="street-address" aria-required="true" class="w-full border-2 border-gray-300 rounded-lg p-3 text-base mt-1 outline-none focus:border-bembos-blue focus:ring-2 focus:ring-blue-200" placeholder="Av. Ejemplo 123, Lima" />
           </div>
         </div>
 
         <div v-if="tipoEntrega === 'local'" class="space-y-4">
           <div>
-            <label for="nombre-local" class="text-sm font-bold text-gray-800">Nombre <span class="text-red-500" aria-hidden="true">*</span></label>
+            <label for="nombre-local" class="text-sm font-bold text-gray-800">Nombre <span class="text-red-500">*</span></label>
             <input id="nombre-local" v-model="nombre" autocomplete="name" aria-required="true" class="w-full border-2 border-gray-300 rounded-lg p-3 text-base mt-1 outline-none focus:border-bembos-blue focus:ring-2 focus:ring-blue-200" placeholder="Ej. Frank Vidal" />
           </div>
           <div>
@@ -53,6 +54,7 @@
         </div>
       </div>
 
+      <!-- Pago -->
       <div class="bg-white rounded-2xl p-5 shadow-sm">
         <h2 class="font-bold text-lg mb-3 text-gray-900">Método de pago</h2>
         <div v-for="metodo in metodosPago" :key="metodo"
@@ -60,8 +62,30 @@
           :class="['border-2 rounded-xl p-4 mb-3 cursor-pointer text-base font-semibold transition min-h-[52px] flex items-center', metodoPago === metodo ? 'bg-yellow-50 border-bembos-yellow text-bembos-black' : 'border-gray-300 text-gray-700 hover:bg-gray-50']">
           {{ metodo }}
         </div>
+
+        <!-- Campos de tarjeta (solo si se selecciona tarjeta) -->
+        <div v-if="metodoPago === 'Tarjeta de prueba **** 0000'" class="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-200 space-y-3">
+          <p class="text-xs text-gray-600 mb-2">
+            <strong>Datos de prueba:</strong> Número: <code>4111 1111 1111 1111</code> | Fecha: <code>09/30</code> | CVV: <code>123</code>
+          </p>
+          <div>
+            <label for="card-number" class="text-sm font-bold text-gray-800">Número de tarjeta</label>
+            <input id="card-number" v-model="cardNumber" @input="formatCardNumber" maxlength="19" class="w-full border-2 border-gray-300 rounded-lg p-3 text-base mt-1 outline-none focus:border-bembos-blue focus:ring-2 focus:ring-blue-200" placeholder="0000 0000 0000 0000" />
+          </div>
+          <div class="flex gap-3">
+            <div class="flex-1">
+              <label for="card-expiry" class="text-sm font-bold text-gray-800">Fecha (MM/AA)</label>
+              <input id="card-expiry" v-model="cardExpiry" @input="formatExpiry" maxlength="5" class="w-full border-2 border-gray-300 rounded-lg p-3 text-base mt-1 outline-none focus:border-bembos-blue focus:ring-2 focus:ring-blue-200" placeholder="MM/AA" />
+            </div>
+            <div class="flex-1">
+              <label for="card-cvv" class="text-sm font-bold text-gray-800">CVV</label>
+              <input id="card-cvv" v-model="cardCvv" type="password" maxlength="4" class="w-full border-2 border-gray-300 rounded-lg p-3 text-base mt-1 outline-none focus:border-bembos-blue focus:ring-2 focus:ring-blue-200" placeholder="123" />
+            </div>
+          </div>
+        </div>
       </div>
 
+      <!-- Totales -->
       <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
         <div class="flex justify-between text-sm mb-2 text-gray-700"><span>Subtotal</span><span>S/{{ cartStore.totalPrice.toFixed(2) }}</span></div>
         <div class="flex justify-between text-sm mb-3 text-gray-700"><span>Envío</span><span>S/{{ tipoEntrega === 'delivery' ? '5.00' : '0.00' }}</span></div>
@@ -70,7 +94,7 @@
         </div>
       </div>
 
-      <!-- Mensaje de error de validación -->
+      <!-- Mensaje de error -->
       <div v-if="errorValidacion" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
         <span class="block sm:inline">{{ errorValidacion }}</span>
       </div>
@@ -85,7 +109,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { ChevronLeft, CheckCircle } from 'lucide-vue-next';
+import { ChevronLeft } from 'lucide-vue-next';
 import { useCartStore } from '../store/cart';
 import { createOrder } from '../services/api';
 
@@ -99,6 +123,11 @@ const metodoPago = ref('Efectivo al recibir');
 const procesando = ref(false);
 const errorValidacion = ref('');
 
+// Variables para la tarjeta
+const cardNumber = ref('');
+const cardExpiry = ref('');
+const cardCvv = ref('');
+
 const sedes = ['Bembos Jockey Plaza', 'Bembos San Miguel', 'Bembos Miraflores', 'Bembos La Molina', 'Bembos San Isidro'];
 const sedeSeleccionada = ref(sedes[0]);
 const metodosPago = ['Efectivo al recibir', 'Tarjeta de prueba **** 0000', 'Billetera digital (simulada)'];
@@ -107,8 +136,39 @@ const totalConEnvio = computed(() => {
   return (cartStore.totalPrice + (tipoEntrega.value === 'delivery' ? 5 : 0)).toFixed(2);
 });
 
+// Formatear número de tarjeta (espacios cada 4 dígitos)
+const formatCardNumber = (e) => {
+  let value = e.target.value.replace(/\s/g, '').replace(/\D/g, '');
+  let formatted = value.match(/.{1,4}/g)?.join(' ') || '';
+  cardNumber.value = formatted.substring(0, 19);
+};
+
+// Formatear fecha (MM/AA)
+const formatExpiry = (e) => {
+  let value = e.target.value.replace(/\D/g, '');
+  if (value.length >= 2) {
+    value = value.substring(0, 2) + '/' + value.substring(2, 4);
+  }
+  cardExpiry.value = value;
+};
+
+// Algoritmo de Luhn para validar tarjeta
+const luhnCheck = (num) => {
+  const arr = `${num}`
+    .split('')
+    .reverse()
+    .map(x => Number.parseInt(x));
+  const lastDigit = arr.shift();
+  let sum = arr.reduce(
+    (acc, val, i) => (i % 2 !== 0 ? acc + val : acc + ((val *= 2) > 9 ? val - 9 : val)),
+    0
+  );
+  sum += lastDigit;
+  return sum % 10 === 0;
+};
+
 const confirmar = async () => {
-  // VALIDACIONES
+  // VALIDACIONES GENERALES
   if (!nombre.value.trim()) {
     errorValidacion.value = 'Por favor, ingresa tu nombre.';
     return;
@@ -116,6 +176,23 @@ const confirmar = async () => {
   if (tipoEntrega.value === 'delivery' && !direccion.value.trim()) {
     errorValidacion.value = 'Por favor, ingresa tu dirección de entrega.';
     return;
+  }
+
+  // VALIDACIÓN DE TARJETA (si se seleccionó)
+  if (metodoPago.value === 'Tarjeta de prueba **** 0000') {
+    const cleanCardNumber = cardNumber.value.replace(/\s/g, '');
+    if (cleanCardNumber.length < 15 || !luhnCheck(cleanCardNumber)) {
+      errorValidacion.value = 'El número de tarjeta no es válido. Usa la tarjeta de prueba: 4111 1111 1111 1111';
+      return;
+    }
+    if (cardExpiry.value.length < 5) {
+      errorValidacion.value = 'La fecha de expiración es obligatoria (MM/AA).';
+      return;
+    }
+    if (cardCvv.value.length < 3) {
+      errorValidacion.value = 'El CVV es obligatorio (3 o 4 dígitos).';
+      return;
+    }
   }
   
   errorValidacion.value = '';
