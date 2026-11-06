@@ -1,58 +1,64 @@
 <template>
   <div class="min-h-screen bg-bembos-cream pb-24">
-    <div class="bg-bembos-blue p-4 flex items-center gap-3 text-white">
-      <ChevronLeft class="w-6 h-6 cursor-pointer" @click="$router.back()" />
-      <h1 class="font-bold text-lg">Tu pedido</h1>
-    </div>
-
-    <div v-if="cartStore.items.length === 0" class="flex flex-col items-center justify-center pt-32 text-center">
-      <div class="w-20 h-20 bg-bembos-yellow rounded-full flex items-center justify-center mb-4">
-        <ShoppingCart class="w-10 h-10 text-bembos-black" />
-      </div>
-      <h2 class="font-bold text-xl mb-2">Tu pedido está vacío</h2>
-      <p class="text-sm text-gray-500 mb-6">Agrega una hamburguesa para empezar.</p>
-      <router-link to="/" class="bg-bembos-yellow text-bembos-black font-bold px-6 py-2 rounded-lg">Ver menú</router-link>
-    </div>
-
-    <div v-else class="p-4">
-      <div v-for="item in cartStore.items" :key="item.id" class="bg-white rounded-xl p-3 shadow-sm mb-3">
-        <div class="flex gap-3 mb-2">
-          <img :src="item.image_url" class="w-20 h-20 rounded-lg object-cover" />
-          <div class="flex-1">
-            <h3 class="font-bold text-sm">{{ item.name }}</h3>
-            <p class="text-[10px] text-gray-500 leading-tight">{{ item.customizations?.tamano }}</p>
-            <p class="text-[10px] text-gray-500 leading-tight">{{ item.customizations?.papas }}</p>
-            <p class="text-[10px] text-gray-500 leading-tight">Salsas: {{ item.customizations?.salsas?.join(', ') || 'Ninguna' }}</p>
-            <span v-if="modoEdicionId === item.id" class="text-green-600 text-[10px] font-semibold mt-1 block">✓ Configuración actualizada</span>
-          </div>
-        </div>
-        <div class="flex justify-between items-center mt-2">
-          <div class="flex items-center gap-3 bg-gray-100 rounded-full px-3 py-1">
-            <button @click="decrementar(item)" class="font-bold text-lg text-bembos-orange">−</button>
-            <span class="text-sm font-semibold">{{ item.quantity }}</span>
-            <button @click="incrementar(item)" class="bg-bembos-black text-white w-6 h-6 rounded-full font-bold flex items-center justify-center">+</button>
-          </div>
-          <span class="font-bold">S/{{ (item.price * item.quantity).toFixed(2) }}</span>
-        </div>
-        <div class="flex gap-2 mt-3">
-          <button @click="editarItem(item.id)" class="flex-1 border border-gray-300 rounded-lg py-2 text-sm font-semibold flex items-center justify-center gap-1">
-            <Pencil class="w-4 h-4" /> Editar
-          </button>
-          <button @click="cartStore.removeItem(item.id)" class="flex-1 bg-red-50 text-red-600 rounded-lg py-2 text-sm font-semibold flex items-center justify-center gap-1">
-            <Trash2 class="w-4 h-4" /> Eliminar
-          </button>
-        </div>
-      </div>
-
-      <div class="mt-4 bg-bembos-yellow rounded-xl p-4 flex justify-between items-center">
-        <span class="font-bold text-sm">Subtotal</span>
-        <span class="font-bold text-lg">S/{{ cartStore.totalPrice.toFixed(2) }}</span>
-      </div>
-
-      <button @click="$router.push('/checkout')" class="w-full bg-bembos-yellow text-bembos-black font-bold py-3 rounded-xl mt-3">
-        Ir a pagar
+    <header class="bg-bembos-blue p-4 flex items-center gap-3 text-white sticky top-0 z-10 shadow-md">
+      <button @click="$router.back()" class="p-2 -ml-2 focus:ring-2 focus:ring-white rounded-full" aria-label="Volver">
+        <ChevronLeft class="w-6 h-6" />
       </button>
-    </div>
+      <h1 class="font-bold text-lg">Tu pedido</h1>
+    </header>
+
+    <main class="max-w-3xl mx-auto p-4 md:p-6">
+      <div v-if="cartStore.items.length === 0" class="flex flex-col items-center justify-center pt-32 text-center">
+        <div class="w-24 h-24 bg-bembos-yellow rounded-full flex items-center justify-center mb-6 shadow-inner">
+          <ShoppingCart class="w-12 h-12 text-bembos-black" aria-hidden="true" />
+        </div>
+        <h2 class="font-bold text-2xl mb-2 text-gray-800">Tu pedido está vacío</h2>
+        <p class="text-base text-gray-600 mb-6">Agrega una hamburguesa para empezar.</p>
+        <router-link to="/" class="bg-bembos-yellow text-bembos-black font-bold px-8 py-3 rounded-lg min-h-[48px] hover:bg-yellow-400 transition">Ver menú</router-link>
+      </div>
+
+      <div v-else>
+        <div v-for="item in cartStore.items" :key="item.id" class="bg-white rounded-2xl p-4 shadow-sm mb-4">
+          <div class="flex gap-4 mb-3">
+            <img :src="item.image_url" :alt="item.name" class="w-24 h-24 rounded-xl object-cover" />
+            <div class="flex-1">
+              <h3 class="font-bold text-base text-gray-900">{{ item.name }}</h3>
+              <!-- Textos con mayor contraste (Cumple 1.4.3) -->
+              <p class="text-xs text-gray-700 leading-tight mt-1">{{ item.customizations?.tamano }}</p>
+              <p class="text-xs text-gray-700 leading-tight">{{ item.customizations?.papas }}</p>
+              <p class="text-xs text-gray-700 leading-tight">Salsas: {{ item.customizations?.salsas?.join(', ') || 'Ninguna' }}</p>
+              <span v-if="modoEdicionId === item.id" class="text-green-700 text-xs font-bold mt-2 block" role="status">✓ Configuración actualizada</span>
+            </div>
+          </div>
+          <div class="flex justify-between items-center mt-3 border-t pt-3">
+            <div class="flex items-center gap-3 bg-gray-100 rounded-full p-1 border border-gray-300">
+              <button @click="decrementar(item)" class="w-11 h-11 flex items-center justify-center font-bold text-xl text-bembos-black rounded-full hover:bg-gray-200 focus:ring-2 focus:ring-bembos-blue" aria-label="Quitar uno">−</button>
+              <span class="text-base font-bold w-6 text-center" aria-live="polite">{{ item.quantity }}</span>
+              <button @click="incrementar(item)" class="w-11 h-11 bg-bembos-black text-white rounded-full font-bold flex items-center justify-center text-xl hover:bg-gray-800 focus:ring-2 focus:ring-bembos-blue" aria-label="Agregar uno">+</button>
+            </div>
+            <span class="font-bold text-lg text-gray-900">S/{{ (item.price * item.quantity).toFixed(2) }}</span>
+          </div>
+          <div class="flex gap-3 mt-4">
+            <button @click="editarItem(item.id)" class="flex-1 border-2 border-gray-400 rounded-xl py-3 text-sm font-bold text-gray-700 flex items-center justify-center gap-2 min-h-[44px] hover:bg-gray-50 focus:ring-2 focus:ring-gray-400">
+              <Pencil class="w-4 h-4" aria-hidden="true" /> Editar
+            </button>
+            <button @click="cartStore.removeItem(item.id)" class="flex-1 bg-red-50 text-red-700 border-2 border-red-200 rounded-xl py-3 text-sm font-bold flex items-center justify-center gap-2 min-h-[44px] hover:bg-red-100 focus:ring-2 focus:ring-red-400">
+              <Trash2 class="w-4 h-4" aria-hidden="true" /> Eliminar
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-6 bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+          <div class="flex justify-between items-center mb-4">
+            <span class="font-bold text-base text-gray-800">Subtotal</span>
+            <span class="font-bold text-xl text-gray-900">S/{{ cartStore.totalPrice.toFixed(2) }}</span>
+          </div>
+          <button @click="$router.push('/checkout')" class="w-full bg-bembos-yellow text-bembos-black font-bold py-4 rounded-xl min-h-[52px] text-lg hover:bg-yellow-400 transition focus:ring-4 focus:ring-yellow-200">
+            Ir a pagar
+          </button>
+        </div>
+      </div>
+    </main>
   </div>
 </template>
 
