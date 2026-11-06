@@ -5,14 +5,20 @@
         <Check class="w-12 h-12 text-green-600" aria-hidden="true" />
       </div>
       <h1 class="text-3xl font-bold mb-2 text-gray-900">Pedido confirmado</h1>
-      <p class="text-base text-gray-600 mb-8">Tu pedido fue registrado correctamente.</p>
+      <p class="text-base text-gray-600 mb-6">Tu pedido fue registrado correctamente.</p>
       
-      <div class="bg-bembos-yellow rounded-2xl px-6 py-4 mb-8 inline-block shadow-sm">
+      <div class="bg-bembos-yellow rounded-2xl px-6 py-4 mb-6 inline-block shadow-sm">
         <p class="text-xs font-bold text-gray-800 uppercase tracking-wider">Código de pedido</p>
         <p class="text-2xl font-extrabold text-gray-900 mt-1">BEM-5734</p>
       </div>
 
-      <p class="text-sm text-gray-700 mb-8 font-medium">Estará listo para recoger en <span class="font-bold text-bembos-blue">{{ sedeRecojo }}</span> en 20 minutos.</p>
+      <!-- QR SIMULADO -->
+      <div class="mb-6 flex flex-col items-center">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=BEM-5734" alt="Código QR para recoger tu pedido" class="w-32 h-32 rounded-lg border-4 border-white shadow-sm" />
+        <p class="text-xs text-gray-500 mt-2">Muestra este QR al recoger</p>
+      </div>
+
+      <p class="text-sm text-gray-700 mb-6 font-medium">Estará listo para recoger en <span class="font-bold text-bembos-blue">{{ sedeRecojo }}</span> en 20 minutos.</p>
 
       <button @click="mostrarResumen = !mostrarResumen" class="w-full border-2 border-gray-800 rounded-xl py-3 font-bold text-base mb-4 flex items-center justify-center gap-2 hover:bg-gray-50 transition min-h-[48px] focus:ring-2 focus:ring-gray-400">
         {{ mostrarResumen ? 'Ocultar resumen del pedido' : 'Ver resumen del pedido' }}
@@ -47,7 +53,7 @@ import { Check, ChevronDown, ChevronUp } from 'lucide-vue-next';
 
 const mostrarResumen = ref(false);
 const lastOrder = ref(null);
-const sedeRecojo = ref('Bembos Jockey Plaza');
+const sedeRecojo = ref('Bembos San Miguel');
 
 onMounted(() => {
   const saved = localStorage.getItem('lastOrder');

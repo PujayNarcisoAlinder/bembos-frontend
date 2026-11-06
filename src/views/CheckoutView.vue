@@ -8,7 +8,6 @@
     </header>
 
     <main class="max-w-3xl mx-auto p-4 md:p-6 space-y-6">
-      <!-- Resumen -->
       <div class="bg-white rounded-2xl p-5 shadow-sm">
         <h2 class="font-bold text-lg mb-3 text-gray-900">Resumen del pedido</h2>
         <div v-for="item in cartStore.items" :key="item.id" class="flex justify-between text-sm mb-2 text-gray-700">
@@ -18,7 +17,6 @@
         <button class="text-bembos-red text-sm font-bold mt-2 hover:underline focus:ring-2 focus:ring-red-300 rounded">Editar pedido</button>
       </div>
 
-      <!-- Entrega -->
       <div class="bg-white rounded-2xl p-5 shadow-sm">
         <h2 class="font-bold text-lg mb-3 text-gray-900">Método de entrega</h2>
         <div class="flex gap-3 mb-5">
@@ -30,7 +28,6 @@
           </button>
         </div>
 
-        <!-- Formulario Delivery -->
         <div v-if="tipoEntrega === 'delivery'" class="space-y-4">
           <div>
             <label for="nombre-delivery" class="text-sm font-bold text-gray-800">Nombre <span class="text-red-500" aria-hidden="true">*</span></label>
@@ -42,7 +39,6 @@
           </div>
         </div>
 
-        <!-- Formulario Local -->
         <div v-if="tipoEntrega === 'local'" class="space-y-4">
           <div>
             <label for="nombre-local" class="text-sm font-bold text-gray-800">Nombre <span class="text-red-500" aria-hidden="true">*</span></label>
@@ -57,7 +53,6 @@
         </div>
       </div>
 
-      <!-- Pago -->
       <div class="bg-white rounded-2xl p-5 shadow-sm">
         <h2 class="font-bold text-lg mb-3 text-gray-900">Método de pago</h2>
         <div v-for="metodo in metodosPago" :key="metodo"
@@ -67,13 +62,17 @@
         </div>
       </div>
 
-      <!-- Totales -->
       <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
         <div class="flex justify-between text-sm mb-2 text-gray-700"><span>Subtotal</span><span>S/{{ cartStore.totalPrice.toFixed(2) }}</span></div>
         <div class="flex justify-between text-sm mb-3 text-gray-700"><span>Envío</span><span>S/{{ tipoEntrega === 'delivery' ? '5.00' : '0.00' }}</span></div>
         <div class="flex justify-between font-bold text-xl border-t pt-3 text-gray-900">
           <span>Total</span><span>S/{{ totalConEnvio }}</span>
         </div>
+      </div>
+
+      <!-- Mensaje de error de validación -->
+      <div v-if="errorValidacion" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+        <span class="block sm:inline">{{ errorValidacion }}</span>
       </div>
 
       <button @click="confirmar" :disabled="procesando" class="w-full bg-bembos-yellow text-bembos-black font-bold py-4 rounded-xl min-h-[56px] text-lg hover:bg-yellow-400 transition focus:ring-4 focus:ring-yellow-200 disabled:opacity-50">
@@ -94,20 +93,14 @@ const cartStore = useCartStore();
 const router = useRouter();
 
 const tipoEntrega = ref('delivery');
-const nombre = ref('Cliente de prueba');
-const direccion = ref('Av. Ejemplo 123, Lima');
+const nombre = ref(''); 
+const direccion = ref('');
 const metodoPago = ref('Efectivo al recibir');
 const procesando = ref(false);
+const errorValidacion = ref('');
 
-const sedes = [
-  'Bembos Jockey Plaza',
-  'Bembos San Miguel',
-  'Bembos Miraflores',
-  'Bembos La Molina',
-  'Bembos San Isidro'
-];
+const sedes = ['Bembos Jockey Plaza', 'Bembos San Miguel', 'Bembos Miraflores', 'Bembos La Molina', 'Bembos San Isidro'];
 const sedeSeleccionada = ref(sedes[0]);
-
 const metodosPago = ['Efectivo al recibir', 'Tarjeta de prueba **** 0000', 'Billetera digital (simulada)'];
 
 const totalConEnvio = computed(() => {
@@ -115,7 +108,19 @@ const totalConEnvio = computed(() => {
 });
 
 const confirmar = async () => {
+  // VALIDACIONES
+  if (!nombre.value.trim()) {
+    errorValidacion.value = 'Por favor, ingresa tu nombre.';
+    return;
+  }
+  if (tipoEntrega.value === 'delivery' && !direccion.value.trim()) {
+    errorValidacion.value = 'Por favor, ingresa tu dirección de entrega.';
+    return;
+  }
+  
+  errorValidacion.value = '';
   procesando.value = true;
+  
   try {
     const direccionFinal = tipoEntrega.value === 'delivery' 
       ? direccion.value 

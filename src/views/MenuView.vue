@@ -1,6 +1,5 @@
 <template>
   <div class="min-h-screen bg-bembos-cream pb-24">
-    <!-- Header Desktop/Móvil -->
     <header class="bg-bembos-blue p-4 shadow-md sticky top-0 z-20">
       <div class="max-w-6xl mx-auto flex justify-between items-center">
         <img :src="logoBembos" alt="Logo de Bembos" class="h-10 object-contain" />
@@ -11,14 +10,12 @@
       </div>
     </header>
 
-    <!-- Contenido Principal -->
     <main class="max-w-6xl mx-auto p-6">
       <div class="mb-8 text-center md:text-left">
         <h1 class="text-3xl md:text-4xl font-bold text-bembos-blue mb-1">Menú</h1>
         <p class="text-sm text-gray-600">Elige tu hamburguesa y personalízala a tu gusto.</p>
       </div>
 
-      <!-- Categorías -->
       <nav class="flex gap-2 mb-8 overflow-x-auto pb-2 justify-center md:justify-start" aria-label="Categorías del menú">
         <button v-for="cat in ['Hamburguesas', 'Combos', 'Promociones']" :key="cat"
           @click="categoriaActiva = cat"
@@ -28,7 +25,6 @@
         </button>
       </nav>
 
-      <!-- Grid de Productos (1 col móvil, 2 tablet, 3 desktop) -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <article v-for="product in productosFiltrados" :key="product.id" class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
           <img :src="product.image_url" :alt="`Hamburguesa ${product.name}`" class="w-full h-56 object-cover" @error="(e) => e.target.src = 'https://placehold.co/600x400/FFC107/0000A0?text=' + encodeURIComponent(product.name)" />
@@ -47,7 +43,6 @@
       </div>
     </main>
 
-    <!-- Bottom Nav (Solo móvil) -->
     <div class="fixed bottom-0 left-0 right-0 bg-bembos-black flex justify-around py-2 z-20 md:hidden">
       <router-link to="/" class="flex flex-col items-center text-bembos-yellow p-2 focus:outline-none">
         <Menu class="w-5 h-5" aria-hidden="true" />
@@ -72,6 +67,7 @@ const categoriaActiva = ref('Hamburguesas');
 
 onMounted(async () => {
   const res = await getProducts();
+
   products.value = res.data;
 });
 

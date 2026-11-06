@@ -23,7 +23,6 @@
             <img :src="item.image_url" :alt="item.name" class="w-24 h-24 rounded-xl object-cover" />
             <div class="flex-1">
               <h3 class="font-bold text-base text-gray-900">{{ item.name }}</h3>
-              <!-- Textos con mayor contraste (Cumple 1.4.3) -->
               <p class="text-xs text-gray-700 leading-tight mt-1">{{ item.customizations?.tamano }}</p>
               <p class="text-xs text-gray-700 leading-tight">{{ item.customizations?.papas }}</p>
               <p class="text-xs text-gray-700 leading-tight">Salsas: {{ item.customizations?.salsas?.join(', ') || 'Ninguna' }}</p>
@@ -74,13 +73,11 @@ const modoEdicionId = ref(null);
 
 const incrementar = (item) => {
   cartStore.addItem({ ...item, quantity: 1 }); 
-  const existing = cartStore.items.find(i => i.id === item.id);
-  if (existing) existing.quantity += 1;
 };
 
 const decrementar = (item) => {
   if (item.quantity > 1) {
-    item.quantity--;
+    cartStore.addItem({ ...item, quantity: -1 });
   } else {
     cartStore.removeItem(item.id);
   }
