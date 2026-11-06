@@ -41,7 +41,7 @@
             <button @click="editarItem(item.id)" class="flex-1 border-2 border-gray-400 rounded-xl py-3 text-sm font-bold text-gray-700 flex items-center justify-center gap-2 min-h-[44px] hover:bg-gray-50 focus:ring-2 focus:ring-gray-400">
               <Pencil class="w-4 h-4" aria-hidden="true" /> Editar
             </button>
-            <button @click="cartStore.removeItem(item.id)" class="flex-1 bg-red-50 text-red-700 border-2 border-red-200 rounded-xl py-3 text-sm font-bold flex items-center justify-center gap-2 min-h-[44px] hover:bg-red-100 focus:ring-2 focus:ring-red-400">
+            <button @click="eliminarItem(item.id)" class="flex-1 bg-red-50 text-red-700 border-2 border-red-200 rounded-xl py-3 text-sm font-bold flex items-center justify-center gap-2 min-h-[44px] hover:bg-red-100 focus:ring-2 focus:ring-red-400">
               <Trash2 class="w-4 h-4" aria-hidden="true" /> Eliminar
             </button>
           </div>
@@ -66,9 +66,11 @@ import { ref } from 'vue';
 import { ChevronLeft, ShoppingCart, Pencil, Trash2 } from 'lucide-vue-next';
 import { useCartStore } from '../store/cart';
 import { useRouter } from 'vue-router';
+import { useToast } from 'vue-toastification';
 
 const cartStore = useCartStore();
 const router = useRouter();
+const toast = useToast();
 const modoEdicionId = ref(null);
 
 const incrementar = (item) => {
@@ -80,7 +82,13 @@ const decrementar = (item) => {
     cartStore.addItem({ ...item, quantity: -1 });
   } else {
     cartStore.removeItem(item.id);
+    toast.info('Producto eliminado del carrito.');
   }
+};
+
+const eliminarItem = (id) => {
+  cartStore.removeItem(id);
+  toast.info('Producto eliminado del carrito.');
 };
 
 const editarItem = (id) => {

@@ -14,7 +14,7 @@
         <img :src="product.image_url" :alt="`Hamburguesa ${product.name}`" class="w-full h-48 md:h-64 object-cover" />
         <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white">
           <h2 class="text-2xl md:text-3xl font-bold">{{ product.name }}</h2>
-          <p class="text-sm">Bembos Jockey Plaza</p>
+          <p class="text-sm">Bembos San Miguel</p>
         </div>
       </div>
 
@@ -24,7 +24,7 @@
           Estás editando tu pedido. Tu configuración anterior ya está marcada.
         </div>
 
-        <!-- Stepper Visual (Ahora sí avanza) -->
+        <!-- Stepper Visual -->
         <ol class="flex justify-between items-center mb-8 relative px-2" aria-label="Pasos de personalización">
           <div class="absolute top-3 left-4 right-4 h-0.5 bg-blue-200 -z-10" aria-hidden="true"></div>
           <li v-for="(step, idx) in steps" :key="idx" class="flex flex-col items-center gap-1 bg-white px-1">
@@ -37,8 +37,6 @@
           </li>
         </ol>
 
-        <!-- CONTENIDO DINÁMICO SEGÚN EL PASO -->
-        
         <!-- PASO 1: Tamaño -->
         <div v-if="stepActivo === 1" class="animate-fade-in">
           <h3 id="tamano-label" class="font-bold text-bembos-blue mb-3 flex items-center gap-2 text-lg">
@@ -133,7 +131,7 @@
           </div>
         </div>
 
-        <!-- Botones de Navegación (Atrás / Siguiente / Agregar) -->
+        <!-- Botones de Navegación -->
         <div class="flex gap-3">
           <button 
             v-if="stepActivo > 1" 
@@ -161,46 +159,28 @@
         </div>
       </div>
     </div>
-
-    <!-- DIÁLOGO MODAL DE STOCK -->
-    <div v-if="mostrarAlertaStock" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" role="dialog" aria-modal="true" aria-labelledby="dialog-title" ref="dialogoRef" @keydown.esc="cerrarDialogo">
-      <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
-        <div class="flex items-start gap-3 mb-4">
-          <div class="bg-red-100 p-2 rounded-full">
-            <AlertCircle class="w-6 h-6 text-red-600" aria-hidden="true" />
-          </div>
-          <div>
-            <h3 id="dialog-title" class="font-bold text-lg text-gray-900">Producto no disponible en este local</h3>
-            <p class="text-sm text-gray-600 mt-1">Esta opción no se encuentra disponible: las papas rústicas se agotaron en Bembos San Miguel.</p>
-          </div>
-        </div>
-        <div class="flex flex-col gap-2 mt-6">
-          <button @click="cerrarDialogo" class="w-full bg-bembos-yellow text-bembos-black font-bold py-3 rounded-xl min-h-[44px]">Elegir otra opción</button>
-          <button @click="cerrarDialogo" class="w-full border-2 border-gray-300 text-gray-700 font-bold py-3 rounded-xl min-h-[44px]">Cambiar de local</button>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { ChevronLeft, Check, AlertCircle } from 'lucide-vue-next';
+import { ChevronLeft, Check } from 'lucide-vue-next';
 import { getProducts } from '../services/api';
 import { useCartStore } from '../store/cart';
+import { useToast } from 'vue-toastification';
 
 const route = useRoute(); 
 const router = useRouter(); 
 const cartStore = useCartStore();
+const toast = useToast();
+
 const product = ref(null); 
 const modoEdicion = ref(false);
 const cantidad = ref(1);
-const mostrarAlertaStock = ref(false);
-const dialogoRef = ref(null);
 
 const steps = ['Tamaño', 'Papas', 'Salsas', 'Ingredientes', 'Extras'];
-const stepActivo = ref(1); // Ahora empieza en el paso 1
+const stepActivo = ref(1);
 
 const tamano = ref('Cheese mediana, incluida');
 const papasSeleccionadas = ref('Papas medianas, incluidas');
@@ -250,14 +230,12 @@ const precioTotal = computed(() => {
   return base * cantidad.value;
 });
 
-// Lógica de navegación
 const pasoSiguiente = () => {
-  // Validación especial para el paso de papas
+  // Validación de stock antes de avanzar
   if (stepActivo.value === 2) {
     const opcionPapas = papas.find(p => p.name === papasSeleccionadas.value);
     if (opcionPapas?.disabled) {
-      mostrarAlertaStock.value = true;
-      nextTick(() => dialogoRef.value?.focus());
+      toast.warning('Las papas rústicas no están disponibles en este local. Elige otra opción.');
       return;
     }
   }
@@ -275,17 +253,11 @@ const pasoAnterior = () => {
   }
 };
 
-const cerrarDialogo = () => {
-  mostrarAlertaStock.value = false;
-  document.getElementById('app')?.focus();
-};
-
 const guardar = () => {
   const opcionPapas = papas.find(p => p.name === papasSeleccionadas.value);
   
   if (opcionPapas?.disabled) {
-    mostrarAlertaStock.value = true;
-    nextTick(() => dialogoRef.value?.focus());
+    toast.warning('Las papas rústicas no están disponibles en este local.');
     return;
   }
 
@@ -304,8 +276,13 @@ const guardar = () => {
     }
   };
 
-  if (modoEdicion.value) cartStore.updateItem(item); 
-  else cartStore.addItem(item);
+  if (modoEdicion.value) {
+    cartStore.updateItem(item); 
+    toast.success('¡Configuración actualizada!');
+  } else {
+    cartStore.addItem(item);
+    toast.success('¡Producto agregado al carrito!');
+  }
   
   router.push('/cart');
 };

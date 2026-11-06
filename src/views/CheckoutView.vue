@@ -63,7 +63,7 @@
           {{ metodo }}
         </div>
 
-        <!-- Campos de tarjeta (solo si se selecciona tarjeta) -->
+        <!-- Campos de tarjeta -->
         <div v-if="metodoPago === 'Tarjeta de prueba **** 0000'" class="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-200 space-y-3">
           <p class="text-xs text-gray-600 mb-2">
             <strong>Datos de prueba:</strong> Número: <code>4111 1111 1111 1111</code> | Fecha: <code>09/30</code> | CVV: <code>123</code>
@@ -94,11 +94,6 @@
         </div>
       </div>
 
-      <!-- Mensaje de error -->
-      <div v-if="errorValidacion" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-        <span class="block sm:inline">{{ errorValidacion }}</span>
-      </div>
-
       <button @click="confirmar" :disabled="procesando" class="w-full bg-bembos-yellow text-bembos-black font-bold py-4 rounded-xl min-h-[56px] text-lg hover:bg-yellow-400 transition focus:ring-4 focus:ring-yellow-200 disabled:opacity-50">
         {{ procesando ? 'Procesando...' : 'Confirmar pedido' }}
       </button>
@@ -112,18 +107,18 @@ import { useRouter } from 'vue-router';
 import { ChevronLeft } from 'lucide-vue-next';
 import { useCartStore } from '../store/cart';
 import { createOrder } from '../services/api';
+import { useToast } from 'vue-toastification';
 
 const cartStore = useCartStore();
 const router = useRouter();
+const toast = useToast();
 
 const tipoEntrega = ref('delivery');
 const nombre = ref(''); 
 const direccion = ref('');
 const metodoPago = ref('Efectivo al recibir');
 const procesando = ref(false);
-const errorValidacion = ref('');
 
-// Variables para la tarjeta
 const cardNumber = ref('');
 const cardExpiry = ref('');
 const cardCvv = ref('');
@@ -136,14 +131,12 @@ const totalConEnvio = computed(() => {
   return (cartStore.totalPrice + (tipoEntrega.value === 'delivery' ? 5 : 0)).toFixed(2);
 });
 
-// Formatear número de tarjeta (espacios cada 4 dígitos)
 const formatCardNumber = (e) => {
   let value = e.target.value.replace(/\s/g, '').replace(/\D/g, '');
   let formatted = value.match(/.{1,4}/g)?.join(' ') || '';
   cardNumber.value = formatted.substring(0, 19);
 };
 
-// Formatear fecha (MM/AA)
 const formatExpiry = (e) => {
   let value = e.target.value.replace(/\D/g, '');
   if (value.length >= 2) {
@@ -152,50 +145,41 @@ const formatExpiry = (e) => {
   cardExpiry.value = value;
 };
 
-// Algoritmo de Luhn para validar tarjeta
 const luhnCheck = (num) => {
-  const arr = `${num}`
-    .split('')
-    .reverse()
-    .map(x => Number.parseInt(x));
+  const arr = `${num}`.split('').reverse().map(x => Number.parseInt(x));
   const lastDigit = arr.shift();
-  let sum = arr.reduce(
-    (acc, val, i) => (i % 2 !== 0 ? acc + val : acc + ((val *= 2) > 9 ? val - 9 : val)),
-    0
-  );
+  let sum = arr.reduce((acc, val, i) => (i % 2 !== 0 ? acc + val : acc + ((val *= 2) > 9 ? val - 9 : val)), 0);
   sum += lastDigit;
   return sum % 10 === 0;
 };
 
 const confirmar = async () => {
-  // VALIDACIONES GENERALES
+  // VALIDACIONES CON TOASTS
   if (!nombre.value.trim()) {
-    errorValidacion.value = 'Por favor, ingresa tu nombre.';
+    toast.error('Por favor, ingresa tu nombre.');
     return;
   }
   if (tipoEntrega.value === 'delivery' && !direccion.value.trim()) {
-    errorValidacion.value = 'Por favor, ingresa tu dirección de entrega.';
+    toast.error('Por favor, ingresa tu dirección de entrega.');
     return;
   }
 
-  // VALIDACIÓN DE TARJETA (si se seleccionó)
   if (metodoPago.value === 'Tarjeta de prueba **** 0000') {
     const cleanCardNumber = cardNumber.value.replace(/\s/g, '');
     if (cleanCardNumber.length < 15 || !luhnCheck(cleanCardNumber)) {
-      errorValidacion.value = 'El número de tarjeta no es válido. Usa la tarjeta de prueba: 4111 1111 1111 1111';
+      toast.error('Número de tarjeta inválido. Usa la tarjeta de prueba: 4111 1111 1111 1111');
       return;
     }
     if (cardExpiry.value.length < 5) {
-      errorValidacion.value = 'La fecha de expiración es obligatoria (MM/AA).';
+      toast.error('La fecha de expiración es obligatoria (MM/AA).');
       return;
     }
     if (cardCvv.value.length < 3) {
-      errorValidacion.value = 'El CVV es obligatorio (3 o 4 dígitos).';
+      toast.error('El CVV es obligatorio (3 o 4 dígitos).');
       return;
     }
   }
   
-  errorValidacion.value = '';
   procesando.value = true;
   
   try {
@@ -221,10 +205,11 @@ const confirmar = async () => {
       items: cartStore.items.map(i => ({ id: i.id, name: i.name, quantity: i.quantity, price: i.price }))
     }));
 
+    toast.success('¡Pedido confirmado con éxito!');
     cartStore.clearCart();
     router.push('/confirm');
   } catch (e) {
-    alert('Error al procesar el pedido');
+    toast.error('Error al procesar el pedido. Intenta de nuevo.');
     console.error(e);
   } finally {
     procesando.value = false;
