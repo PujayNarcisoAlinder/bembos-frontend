@@ -6,12 +6,14 @@
         <span class="text-2xl font-black italic tracking-tighter">BEMBOS</span>
       </router-link>
 
-      <!-- Nav Desktop -->
-      <nav class="hidden md:flex items-center gap-6 text-sm font-bold">
-        <router-link to="/" class="hover:text-bembos-yellow transition flex items-center gap-1"><MenuIcon class="w-4 h-4"/> MENÚ</router-link>
-        <a href="#" class="hover:text-bembos-yellow transition flex items-center gap-1"><Star class="w-4 h-4"/> PROMOS</a>
-        <a href="#" class="hover:text-bembos-yellow transition flex items-center gap-1"><Heart class="w-4 h-4"/> LEALTAD</a>
-        <a href="#" class="hover:text-bembos-yellow transition flex items-center gap-1"><MapPin class="w-4 h-4"/> LOCALES</a>
+      <!-- Nav Desktop (S6: py-3 para llegar a 44px de alto) -->
+      <nav class="hidden md:flex items-center gap-6 text-sm font-bold h-full">
+        <router-link to="/" class="hover:text-bembos-yellow transition flex items-center gap-1 py-3"><MenuIcon class="w-4 h-4"/> MENÚ</router-link>
+        
+        <!-- S8: Enlaces con href="#" convertidos en botones deshabilitados o con destino -->
+        <button disabled class="hover:text-bembos-yellow transition flex items-center gap-1 py-3 opacity-70 cursor-not-allowed" title="Próximamente"><Star class="w-4 h-4"/> PROMOS</button>
+        <button disabled class="hover:text-bembos-yellow transition flex items-center gap-1 py-3 opacity-70 cursor-not-allowed" title="Próximamente"><Heart class="w-4 h-4"/> LEALTAD</button>
+        <button disabled class="hover:text-bembos-yellow transition flex items-center gap-1 py-3 opacity-70 cursor-not-allowed" title="Próximamente"><MapPin class="w-4 h-4"/> LOCALES</button>
       </nav>
 
       <!-- Acciones -->
@@ -20,7 +22,7 @@
           <span class="font-bold">Llámanos</span>
           <span class="text-bembos-yellow font-bold">(01) 610 0808</span>
         </div>
-        <router-link to="/cart" class="bg-bembos-yellow text-bembos-blue font-bold px-3 py-1.5 rounded flex items-center gap-2 text-sm hover:bg-yellow-400 transition">
+        <router-link to="/cart" class="bg-bembos-yellow text-bembos-blue font-bold px-3 py-1.5 rounded flex items-center gap-2 text-sm hover:bg-yellow-400 transition min-h-[44px]">
           <ShoppingCart class="w-4 h-4"/>
           <span>S/ {{ cartStore.totalPrice.toFixed(2) }}</span>
         </router-link>
