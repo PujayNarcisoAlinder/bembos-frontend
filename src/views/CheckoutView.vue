@@ -22,9 +22,11 @@
         <h2 class="font-bold text-lg mb-3 text-gray-900">Método de entrega</h2>
         <div class="flex gap-3 mb-5">
           <button @click="tipoEntrega = 'delivery'" :aria-pressed="tipoEntrega === 'delivery'" :class="['flex-1 border-2 rounded-xl p-4 flex items-center justify-center gap-2 text-sm font-semibold transition min-h-[52px]', tipoEntrega === 'delivery' ? 'bg-yellow-50 border-amber-600 text-bembos-black' : 'border-gray-500 text-gray-700 hover:bg-gray-50']">
+            <Check v-if="tipoEntrega === 'delivery'" class="w-5 h-5 text-amber-700" aria-hidden="true" />
             Delivery
           </button>
           <button @click="tipoEntrega = 'local'" :aria-pressed="tipoEntrega === 'local'" :class="['flex-1 border-2 rounded-xl p-4 flex items-center justify-center gap-2 text-sm font-semibold transition min-h-[52px]', tipoEntrega === 'local' ? 'bg-yellow-50 border-amber-600 text-bembos-black' : 'border-gray-500 text-gray-700 hover:bg-gray-50']">
+            <Check v-if="tipoEntrega === 'local'" class="w-5 h-5 text-amber-700" aria-hidden="true" />
             Recojo en local
           </button>
         </div>
