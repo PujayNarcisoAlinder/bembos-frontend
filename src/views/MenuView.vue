@@ -45,7 +45,6 @@
                 </div>
               </div>
               <div class="w-1/2 flex justify-center items-center relative p-4">
-                <!-- alt descriptivo -->
                 <img :src="banner.img" :alt="banner.alt" class="h-[80%] md:h-[90%] object-contain drop-shadow-2xl" />
               </div>
             </div>
@@ -256,7 +255,7 @@ const products = ref([]);
 const currentSlide = ref(0);
 let autoSlideInterval;
 const pausado = ref(false);
-let tieneReducedMotion = false;
+const tieneReducedMotion = ref(false);
 
 const banners = [
   {
@@ -312,7 +311,7 @@ const prevSlide = () => {
 };
 
 const togglePausa = () => {
-  if (tieneReducedMotion) return;
+  if (tieneReducedMotion.value) return;
   pausado.value = !pausado.value;
   if (pausado.value) {
     clearInterval(autoSlideInterval);
@@ -322,8 +321,8 @@ const togglePausa = () => {
 };
 
 onMounted(async () => {
-  tieneReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!tieneReducedMotion) {
+  tieneReducedMotion.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!tieneReducedMotion.value) {
     autoSlideInterval = setInterval(nextSlide, 5000);
   }
   const res = await getProducts();
@@ -334,7 +333,6 @@ onUnmounted(() => {
   clearInterval(autoSlideInterval);
 });
 
-// Categorías con secciones correctas
 const categorias = [
   { name: 'Cyber Bembos', section: 'cyber-bembos' },
   { name: 'Promos Exclusivas', section: 'promos-exclusivas' },
@@ -343,7 +341,6 @@ const categorias = [
   { name: 'Loncherita por la Educación', section: 'loncherita' }
 ];
 
-// Filtros de productos por categoría
 const cyberBembos = computed(() => products.value.filter(p => p.category === 'Recomendados'));
 const promociones = computed(() => products.value.filter(p => p.category === 'Promos Exclusivas'));
 const combos = computed(() => products.value.filter(p => p.category === 'Combos'));

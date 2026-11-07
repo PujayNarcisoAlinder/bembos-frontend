@@ -5,7 +5,6 @@ import CartView from '../views/CartView.vue';
 import CheckoutView from '../views/CheckoutView.vue';
 import ConfirmView from '../views/ConfirmView.vue';
 import NotFoundView from '../views/NotFoundView.vue';
-import { useToast } from 'vue-toastification';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -35,11 +34,6 @@ const focusH1 = (intentos = 0) => {
 };
 
 router.afterEach((to) => {
-  // Cerrar toasts al navegar
-  const toast = useToast();
-  toast.clear();
-
-  // Título dinámico
   if (to.path === '/') {
     document.title = 'Menú — Bembos';
   } else if (to.path.startsWith('/product')) {

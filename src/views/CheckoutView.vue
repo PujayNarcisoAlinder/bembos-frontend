@@ -27,7 +27,6 @@
             :aria-pressed="tipoEntrega === 'delivery'"
             :class="['flex-1 border-2 rounded-xl p-4 flex items-center justify-center gap-2 text-sm font-semibold transition min-h-[52px]', tipoEntrega === 'delivery' ? 'bg-yellow-50 border-amber-600 text-bembos-black' : 'border-gray-500 text-gray-700 hover:bg-gray-50']"
           >
-            <!-- 1.4.1: ícono visible -->
             <Check v-if="tipoEntrega === 'delivery'" class="w-5 h-5 text-amber-700" aria-hidden="true" />
             Delivery
           </button>
@@ -49,6 +48,7 @@
             <input 
               id="nombre-delivery" 
               v-model="nombre" 
+              @input="errores.nombre = ''"
               autocomplete="name" 
               aria-required="true"
               :aria-invalid="errores.nombre ? 'true' : undefined"
@@ -63,6 +63,7 @@
             <input 
               id="direccion-delivery" 
               v-model="direccion" 
+              @input="errores.direccion = ''"
               autocomplete="street-address" 
               aria-required="true"
               :aria-invalid="errores.direccion ? 'true' : undefined"
@@ -80,6 +81,7 @@
             <input 
               id="nombre-local" 
               v-model="nombre" 
+              @input="errores.nombre = ''"
               autocomplete="name" 
               aria-required="true"
               :aria-invalid="errores.nombre ? 'true' : undefined"
@@ -111,7 +113,7 @@
           </label>
         </div>
 
-        <!-- Campos de tarjeta con validación inline -->
+        <!-- Campos de tarjeta -->
         <div v-if="metodoPago === 'Tarjeta de prueba **** 0000'" class="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-200 space-y-3">
           <p class="text-xs text-gray-600 mb-2">
             <strong>Datos de prueba:</strong> Número: <code>4111 1111 1111 1111</code> | Fecha: <code>09/30</code> | CVV: <code>123</code>
@@ -221,6 +223,7 @@ const formatCardNumber = (e) => {
   let value = e.target.value.replace(/\s/g, '').replace(/\D/g, '');
   let formatted = value.match(/.{1,4}/g)?.join(' ') || '';
   cardNumber.value = formatted.substring(0, 19);
+  erroresTarjeta.value.number = '';
 };
 
 const formatExpiry = (e) => {
@@ -229,6 +232,7 @@ const formatExpiry = (e) => {
     value = value.substring(0, 2) + '/' + value.substring(2, 4);
   }
   cardExpiry.value = value;
+  erroresTarjeta.value.expiry = '';
 };
 
 const luhnCheck = (num) => {
@@ -240,11 +244,13 @@ const luhnCheck = (num) => {
 };
 
 const confirmar = async () => {
+  // Cerrar toasts de error anteriores
+  toast.clear();
+  
   errores.value = { nombre: '', direccion: '' };
   erroresTarjeta.value = { number: '', expiry: '', cvv: '' };
   let hayError = false;
 
-  // Validaciones generales
   if (!nombre.value.trim()) {
     errores.value.nombre = 'Por favor, ingresa tu nombre.';
     hayError = true;
@@ -254,7 +260,6 @@ const confirmar = async () => {
     hayError = true;
   }
 
-  // Validaciones de tarjeta
   if (metodoPago.value === 'Tarjeta de prueba **** 0000') {
     const cleanCardNumber = cardNumber.value.replace(/\s/g, '');
     if (cleanCardNumber.length < 15 || !luhnCheck(cleanCardNumber)) {
@@ -273,7 +278,6 @@ const confirmar = async () => {
 
   if (hayError) {
     toast.error('Revisa los campos marcados en rojo.');
-    // Enfocar el primer campo con error
     setTimeout(() => {
       if (errores.value.nombre) {
         document.getElementById(tipoEntrega.value === 'delivery' ? 'nombre-delivery' : 'nombre-local')?.focus();
