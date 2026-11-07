@@ -26,11 +26,11 @@
               <p class="text-xs text-gray-700 leading-tight mt-1">{{ item.customizations?.tamano }}</p>
               <p class="text-xs text-gray-700 leading-tight">{{ item.customizations?.papas }}</p>
               <p class="text-xs text-gray-700 leading-tight">Salsas: {{ item.customizations?.salsas?.join(', ') || 'Ninguna' }}</p>
-              <span v-if="modoEdicionId === item.id" class="text-green-700 text-xs font-bold mt-2 block" role="status">✓ Configuración actualizada</span>
+              <span v-if="item.justEdited" class="text-green-700 text-xs font-bold mt-2 block" role="status">✓ Configuración actualizada</span>
             </div>
           </div>
           <div class="flex justify-between items-center mt-3 border-t pt-3">
-            <div class="flex items-center gap-3 bg-gray-100 rounded-full p-1 border border-gray-300">
+            <div class="flex items-center gap-3 bg-gray-100 rounded-full p-1 border border-gray-500">
               <button @click="decrementar(item)" class="w-11 h-11 flex items-center justify-center font-bold text-xl text-bembos-black rounded-full hover:bg-gray-200 focus:ring-2 focus:ring-bembos-blue" aria-label="Quitar uno">−</button>
               <span class="text-base font-bold w-6 text-center" aria-live="polite">{{ item.quantity }}</span>
               <button @click="incrementar(item)" class="w-11 h-11 bg-bembos-black text-white rounded-full font-bold flex items-center justify-center text-xl hover:bg-gray-800 focus:ring-2 focus:ring-bembos-blue" aria-label="Agregar uno">+</button>
@@ -38,10 +38,10 @@
             <span class="font-bold text-lg text-gray-900">S/{{ (item.price * item.quantity).toFixed(2) }}</span>
           </div>
           <div class="flex gap-3 mt-4">
-            <button @click="editarItem(item.id)" class="flex-1 border-2 border-gray-400 rounded-xl py-3 text-sm font-bold text-gray-700 flex items-center justify-center gap-2 min-h-[44px] hover:bg-gray-50 focus:ring-2 focus:ring-gray-400">
+            <button @click="editarItem(item.id)" class="flex-1 border-2 border-gray-500 rounded-xl py-3 text-sm font-bold text-gray-700 flex items-center justify-center gap-2 min-h-[44px] hover:bg-gray-50 focus:ring-2 focus:ring-gray-400">
               <Pencil class="w-4 h-4" aria-hidden="true" /> Editar
             </button>
-            <button @click="eliminarItem(item.id)" class="flex-1 bg-red-50 text-red-700 border-2 border-red-200 rounded-xl py-3 text-sm font-bold flex items-center justify-center gap-2 min-h-[44px] hover:bg-red-100 focus:ring-2 focus:ring-red-400">
+            <button @click="eliminarItem(item.id)" class="flex-1 bg-red-50 text-red-700 border-2 border-red-300 rounded-xl py-3 text-sm font-bold flex items-center justify-center gap-2 min-h-[44px] hover:bg-red-100 focus:ring-2 focus:ring-red-400">
               <Trash2 class="w-4 h-4" aria-hidden="true" /> Eliminar
             </button>
           </div>
@@ -62,7 +62,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { ChevronLeft, ShoppingCart, Pencil, Trash2 } from 'lucide-vue-next';
 import { useCartStore } from '../store/cart';
 import { useRouter } from 'vue-router';
@@ -71,7 +71,15 @@ import { useToast } from 'vue-toastification';
 const cartStore = useCartStore();
 const router = useRouter();
 const toast = useToast();
-const modoEdicionId = ref(null);
+
+onMounted(() => {
+  // R7: Limpiamos el aviso después de 3 segundos
+  cartStore.items.forEach(item => {
+    if (item.justEdited) {
+      setTimeout(() => { item.justEdited = false; }, 3000);
+    }
+  });
+});
 
 const incrementar = (item) => {
   cartStore.addItem({ ...item, quantity: 1 }); 
@@ -92,7 +100,6 @@ const eliminarItem = (id) => {
 };
 
 const editarItem = (id) => {
-  modoEdicionId.value = id;
   router.push(`/product/${id}?edit=${id}`);
 };
 </script>
