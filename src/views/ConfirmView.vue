@@ -20,13 +20,13 @@
 
       <p class="text-sm text-gray-700 mb-6 font-medium">Estará listo para recoger en <span class="font-bold text-bembos-blue">{{ sedeRecojo }}</span> en 20 minutos.</p>
 
-      <button @click="mostrarResumen = !mostrarResumen" class="w-full border-2 border-gray-800 rounded-xl py-3 font-bold text-base mb-4 flex items-center justify-center gap-2 hover:bg-gray-50 transition min-h-[48px] focus:ring-2 focus:ring-gray-400">
+      <button @click="mostrarResumen = !mostrarResumen" :aria-expanded="mostrarResumen" aria-controls="resumen-pedido" class="w-full border-2 border-gray-800 rounded-xl py-3 font-bold text-base mb-4 flex items-center justify-center gap-2 hover:bg-gray-50 transition min-h-[48px] focus:ring-2 focus:ring-gray-400">
         {{ mostrarResumen ? 'Ocultar resumen del pedido' : 'Ver resumen del pedido' }}
         <ChevronDown v-if="!mostrarResumen" class="w-5 h-5" aria-hidden="true" />
         <ChevronUp v-else class="w-5 h-5" aria-hidden="true" />
       </button>
 
-      <div v-if="mostrarResumen" class="w-full bg-gray-50 rounded-xl p-4 mb-4 text-left border border-gray-200" role="region" aria-label="Resumen del pedido">
+      <div v-show="mostrarResumen" id="resumen-pedido" class="w-full bg-gray-50 rounded-xl p-4 mb-4 text-left border border-gray-200" role="region" aria-label="Resumen del pedido">
         <div v-if="lastOrder">
           <div v-for="item in lastOrder.items" :key="item.id" class="flex justify-between text-sm mb-2 text-gray-700">
             <span>{{ item.quantity }} x {{ item.name }}</span>
