@@ -2,12 +2,13 @@
   <div class="min-h-screen bg-[#f8f9fa] font-sans text-gray-900 flex flex-col">
     <HeaderBembos />
 
-    <main class="flex-grow">
+    <main id="contenido" tabindex="-1" class="flex-grow outline-none">
       
       <!-- BARRA SECUNDARIA -->
       <div class="bg-gray-100 border-b border-gray-200 py-1.5">
         <div class="max-w-7xl mx-auto px-4 flex justify-between items-center text-[11px] font-bold">
-          <button class="bg-[#FFD200] text-blue-900 px-3 py-1.5 rounded-full flex items-center gap-1 hover:bg-yellow-400 transition min-h-[32px]">
+          <!-- Botón dirección a 44px -->
+          <button class="bg-[#FFD200] text-blue-900 px-4 py-2 rounded-full flex items-center gap-1 hover:bg-yellow-400 transition min-h-[44px]">
             <MapPin class="w-3 h-3"/> Comienza tu pedido: Elige tu dirección
           </button>
           <div class="hidden md:flex items-center gap-5 text-gray-600">
@@ -20,7 +21,7 @@
 
       <h1 class="sr-only">Menú Bembos</h1>
 
-      <!-- CARRUSEL DE BANNERS -->
+      <!-- CARRUSEL -->
       <section class="relative w-full overflow-hidden bg-blue-900 h-[280px] md:h-[360px]" aria-roledescription="carrusel" aria-label="Promociones destacadas">
         <div 
           class="flex transition-transform duration-500 ease-in-out h-full"
@@ -58,7 +59,8 @@
           <ChevronRight class="w-6 h-6"/>
         </button>
 
-        <button @click="togglePausa" class="absolute bottom-3 right-4 bg-white/80 text-blue-900 rounded-full px-3 py-1 text-xs font-bold z-20 min-h-[32px]" :aria-label="pausado ? 'Reanudar el carrusel' : 'Pausar el carrusel'">
+        <!-- Botón de pausa a 44px -->
+        <button @click="togglePausa" class="absolute bottom-3 right-4 bg-white/80 text-blue-900 rounded-full px-4 py-2 text-xs font-bold z-20 min-h-[44px] min-w-[44px]" :aria-label="pausado ? 'Reanudar el carrusel' : 'Pausar el carrusel'">
           {{ pausado ? '▶ Reanudar' : '⏸ Pausar' }}
         </button>
 
@@ -76,12 +78,15 @@
         </div>
       </section>
 
-      <!-- CÁPSULAS DE CATEGORÍAS -->
+      <!-- CÁPSULAS DE CATEGORÍAS con secciones correctas y 44px -->
       <section class="bg-white py-4 shadow-sm relative z-10">
         <div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-center gap-3">
-          <button v-for="cat in categorias" :key="cat.name"
+          <button 
+            v-for="cat in categorias" 
+            :key="cat.name"
             @click="scrollToSection(cat.section)"
-            class="px-5 py-1.5 border border-gray-500 rounded-full text-sm font-bold text-gray-800 hover:bg-gray-100 transition">
+            class="px-5 py-2 border border-gray-500 rounded-full text-sm font-bold text-gray-800 hover:bg-gray-100 transition min-h-[44px]"
+          >
             {{ cat.name }}
           </button>
         </div>
@@ -108,7 +113,6 @@
                 <span v-if="product.old_price" class="text-xs text-gray-600 line-through">S/{{ product.old_price.toFixed(2) }}</span>
                 <span v-if="product.discount" class="bg-red-600 text-white text-[10px] font-bold px-1 rounded">{{ product.discount }}%</span>
               </div>
-              <!-- CAMBIO CLAVE: ChevronRight en lugar de Plus -->
               <button 
                 @click="$router.push(`/product/${product.id}`)" 
                 class="bg-blue-600 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-700 transition"
@@ -146,7 +150,6 @@
                 <span class="font-bold text-lg">S/{{ product.price.toFixed(2) }}</span>
                 <span v-if="product.old_price" class="text-xs text-gray-600 line-through">S/{{ product.old_price.toFixed(2) }}</span>
               </div>
-              <!-- CAMBIO CLAVE: ChevronRight en lugar de Plus -->
               <button 
                 @click="$router.push(`/product/${product.id}`)" 
                 class="bg-blue-600 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-700 transition"
@@ -175,6 +178,7 @@ const carouselMasVendidos = ref(null);
 const currentSlide = ref(0);
 let autoSlideInterval;
 const pausado = ref(false);
+let tieneReducedMotion = false;
 
 const banners = [
   {
@@ -224,6 +228,7 @@ const prevSlide = () => {
 };
 
 const togglePausa = () => {
+  if (tieneReducedMotion) return; // No hacer nada si el usuario prefiere no moverse
   pausado.value = !pausado.value;
   if (pausado.value) {
     clearInterval(autoSlideInterval);
@@ -233,8 +238,8 @@ const togglePausa = () => {
 };
 
 onMounted(async () => {
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!reduce) {
+  tieneReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!tieneReducedMotion) {
     autoSlideInterval = setInterval(nextSlide, 5000);
   }
   const res = await getProducts();

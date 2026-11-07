@@ -1,13 +1,13 @@
 <template>
   <div class="min-h-screen bg-bembos-cream pb-24">
     <header class="bg-bembos-blue p-4 flex items-center gap-3 text-white sticky top-0 z-10 shadow-md">
-      <button @click="$router.back()" class="p-2 -ml-2 focus:ring-2 focus:ring-white rounded-full" aria-label="Volver">
+      <button @click="$router.back()" class="w-11 h-11 flex items-center justify-center -ml-2 focus:ring-2 focus:ring-white rounded-full" aria-label="Volver">
         <ChevronLeft class="w-6 h-6" />
       </button>
       <h1 class="font-bold text-lg">Pagar</h1>
     </header>
 
-    <main class="max-w-3xl mx-auto p-4 md:p-6 space-y-6">
+    <main id="contenido" tabindex="-1" class="max-w-3xl mx-auto p-4 md:p-6 space-y-6 outline-none">
       <!-- Resumen -->
       <div class="bg-white rounded-2xl p-5 shadow-sm">
         <h2 class="font-bold text-lg mb-3 text-gray-900">Resumen del pedido</h2>
@@ -21,13 +21,14 @@
       <div class="bg-white rounded-2xl p-5 shadow-sm">
         <h2 class="font-bold text-lg mb-3 text-gray-900">Método de entrega</h2>
         
-        <!-- R6: aria-pressed en botones de entrega -->
         <div class="flex gap-3 mb-5" role="group" aria-label="Método de entrega">
           <button 
             @click="tipoEntrega = 'delivery'" 
             :aria-pressed="tipoEntrega === 'delivery'"
             :class="['flex-1 border-2 rounded-xl p-4 flex items-center justify-center gap-2 text-sm font-semibold transition min-h-[52px]', tipoEntrega === 'delivery' ? 'bg-yellow-50 border-amber-600 text-bembos-black' : 'border-gray-500 text-gray-700 hover:bg-gray-50']"
           >
+            <!-- 1.4.1: ícono visible -->
+            <Check v-if="tipoEntrega === 'delivery'" class="w-5 h-5 text-amber-700" aria-hidden="true" />
             Delivery
           </button>
           <button 
@@ -35,11 +36,11 @@
             :aria-pressed="tipoEntrega === 'local'"
             :class="['flex-1 border-2 rounded-xl p-4 flex items-center justify-center gap-2 text-sm font-semibold transition min-h-[52px]', tipoEntrega === 'local' ? 'bg-yellow-50 border-amber-600 text-bembos-black' : 'border-gray-500 text-gray-700 hover:bg-gray-50']"
           >
+            <Check v-if="tipoEntrega === 'local'" class="w-5 h-5 text-amber-700" aria-hidden="true" />
             Recojo en local
           </button>
         </div>
 
-        <!-- R9: Leyenda de campos obligatorios -->
         <p class="text-xs text-gray-600 mb-3">Los campos marcados con <span class="text-red-700 font-bold">*</span> son obligatorios.</p>
 
         <div v-if="tipoEntrega === 'delivery'" class="space-y-4">
@@ -97,7 +98,7 @@
         </div>
       </div>
 
-      <!-- Pago (R2: radios nativos) -->
+      <!-- Pago -->
       <div class="bg-white rounded-2xl p-5 shadow-sm">
         <h2 id="pago-label" class="font-bold text-lg mb-3 text-gray-900">Método de pago</h2>
         <div role="radiogroup" aria-labelledby="pago-label" class="space-y-3">
@@ -110,23 +111,59 @@
           </label>
         </div>
 
-        <!-- Campos de tarjeta (R8: autocomplete) -->
+        <!-- Campos de tarjeta con validación inline -->
         <div v-if="metodoPago === 'Tarjeta de prueba **** 0000'" class="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-200 space-y-3">
           <p class="text-xs text-gray-600 mb-2">
             <strong>Datos de prueba:</strong> Número: <code>4111 1111 1111 1111</code> | Fecha: <code>09/30</code> | CVV: <code>123</code>
           </p>
           <div>
-            <label for="card-number" class="text-sm font-bold text-gray-800">Número de tarjeta</label>
-            <input id="card-number" v-model="cardNumber" @input="formatCardNumber" autocomplete="cc-number" maxlength="19" class="w-full border-2 border-gray-500 rounded-lg p-3 text-base mt-1 outline-none focus:border-bembos-blue focus:ring-2 focus:ring-blue-200" placeholder="0000 0000 0000 0000" />
+            <label for="card-number" class="text-sm font-bold text-gray-800">Número de tarjeta <span class="text-red-700">*</span></label>
+            <input 
+              id="card-number" 
+              v-model="cardNumber" 
+              @input="formatCardNumber" 
+              autocomplete="cc-number" 
+              aria-required="true"
+              :aria-invalid="erroresTarjeta.number ? 'true' : undefined"
+              :aria-describedby="erroresTarjeta.number ? 'err-card-number' : undefined"
+              :class="['w-full border-2 rounded-lg p-3 text-base mt-1 outline-none focus:border-bembos-blue focus:ring-2 focus:ring-blue-200', erroresTarjeta.number ? 'border-red-700' : 'border-gray-500']"
+              maxlength="19" 
+              placeholder="0000 0000 0000 0000" 
+            />
+            <p v-if="erroresTarjeta.number" id="err-card-number" class="text-sm text-red-700 mt-1">{{ erroresTarjeta.number }}</p>
           </div>
           <div class="flex gap-3">
             <div class="flex-1">
-              <label for="card-expiry" class="text-sm font-bold text-gray-800">Fecha (MM/AA)</label>
-              <input id="card-expiry" v-model="cardExpiry" @input="formatExpiry" autocomplete="cc-exp" maxlength="5" class="w-full border-2 border-gray-500 rounded-lg p-3 text-base mt-1 outline-none focus:border-bembos-blue focus:ring-2 focus:ring-blue-200" placeholder="MM/AA" />
+              <label for="card-expiry" class="text-sm font-bold text-gray-800">Fecha (MM/AA) <span class="text-red-700">*</span></label>
+              <input 
+                id="card-expiry" 
+                v-model="cardExpiry" 
+                @input="formatExpiry" 
+                autocomplete="cc-exp" 
+                aria-required="true"
+                :aria-invalid="erroresTarjeta.expiry ? 'true' : undefined"
+                :aria-describedby="erroresTarjeta.expiry ? 'err-card-expiry' : undefined"
+                :class="['w-full border-2 rounded-lg p-3 text-base mt-1 outline-none focus:border-bembos-blue focus:ring-2 focus:ring-blue-200', erroresTarjeta.expiry ? 'border-red-700' : 'border-gray-500']"
+                maxlength="5" 
+                placeholder="MM/AA" 
+              />
+              <p v-if="erroresTarjeta.expiry" id="err-card-expiry" class="text-sm text-red-700 mt-1">{{ erroresTarjeta.expiry }}</p>
             </div>
             <div class="flex-1">
-              <label for="card-cvv" class="text-sm font-bold text-gray-800">CVV</label>
-              <input id="card-cvv" v-model="cardCvv" type="password" autocomplete="cc-csc" maxlength="4" class="w-full border-2 border-gray-500 rounded-lg p-3 text-base mt-1 outline-none focus:border-bembos-blue focus:ring-2 focus:ring-blue-200" placeholder="123" />
+              <label for="card-cvv" class="text-sm font-bold text-gray-800">CVV <span class="text-red-700">*</span></label>
+              <input 
+                id="card-cvv" 
+                v-model="cardCvv" 
+                type="password" 
+                autocomplete="cc-csc" 
+                aria-required="true"
+                :aria-invalid="erroresTarjeta.cvv ? 'true' : undefined"
+                :aria-describedby="erroresTarjeta.cvv ? 'err-card-cvv' : undefined"
+                :class="['w-full border-2 rounded-lg p-3 text-base mt-1 outline-none focus:border-bembos-blue focus:ring-2 focus:ring-blue-200', erroresTarjeta.cvv ? 'border-red-700' : 'border-gray-500']"
+                maxlength="4" 
+                placeholder="123" 
+              />
+              <p v-if="erroresTarjeta.cvv" id="err-card-cvv" class="text-sm text-red-700 mt-1">{{ erroresTarjeta.cvv }}</p>
             </div>
           </div>
         </div>
@@ -166,6 +203,7 @@ const direccion = ref('');
 const metodoPago = ref('Efectivo al recibir');
 const procesando = ref(false);
 const errores = ref({ nombre: '', direccion: '' });
+const erroresTarjeta = ref({ number: '', expiry: '', cvv: '' });
 
 const cardNumber = ref('');
 const cardExpiry = ref('');
@@ -203,8 +241,10 @@ const luhnCheck = (num) => {
 
 const confirmar = async () => {
   errores.value = { nombre: '', direccion: '' };
+  erroresTarjeta.value = { number: '', expiry: '', cvv: '' };
   let hayError = false;
 
+  // Validaciones generales
   if (!nombre.value.trim()) {
     errores.value.nombre = 'Por favor, ingresa tu nombre.';
     hayError = true;
@@ -214,28 +254,40 @@ const confirmar = async () => {
     hayError = true;
   }
 
-  if (hayError) {
-    toast.error('Revisa los campos marcados en rojo.');
-    setTimeout(() => {
-      document.getElementById(errores.value.nombre ? 'nombre-delivery' : 'direccion-delivery')?.focus();
-    }, 100);
-    return;
-  }
-
+  // Validaciones de tarjeta
   if (metodoPago.value === 'Tarjeta de prueba **** 0000') {
     const cleanCardNumber = cardNumber.value.replace(/\s/g, '');
     if (cleanCardNumber.length < 15 || !luhnCheck(cleanCardNumber)) {
-      toast.error('Número de tarjeta inválido. Usa la tarjeta de prueba: 4111 1111 1111 1111');
-      return;
+      erroresTarjeta.value.number = 'Número de tarjeta inválido. Usa: 4111 1111 1111 1111';
+      hayError = true;
     }
     if (cardExpiry.value.length < 5) {
-      toast.error('La fecha de expiración es obligatoria (MM/AA).');
-      return;
+      erroresTarjeta.value.expiry = 'Fecha obligatoria (MM/AA).';
+      hayError = true;
     }
     if (cardCvv.value.length < 3) {
-      toast.error('El CVV es obligatorio (3 o 4 dígitos).');
-      return;
+      erroresTarjeta.value.cvv = 'CVV obligatorio (3 o 4 dígitos).';
+      hayError = true;
     }
+  }
+
+  if (hayError) {
+    toast.error('Revisa los campos marcados en rojo.');
+    // Enfocar el primer campo con error
+    setTimeout(() => {
+      if (errores.value.nombre) {
+        document.getElementById(tipoEntrega.value === 'delivery' ? 'nombre-delivery' : 'nombre-local')?.focus();
+      } else if (errores.value.direccion) {
+        document.getElementById('direccion-delivery')?.focus();
+      } else if (erroresTarjeta.value.number) {
+        document.getElementById('card-number')?.focus();
+      } else if (erroresTarjeta.value.expiry) {
+        document.getElementById('card-expiry')?.focus();
+      } else if (erroresTarjeta.value.cvv) {
+        document.getElementById('card-cvv')?.focus();
+      }
+    }, 100);
+    return;
   }
   
   procesando.value = true;

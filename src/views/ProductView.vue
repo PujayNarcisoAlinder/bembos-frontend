@@ -1,5 +1,6 @@
 <template>
   <div v-if="product" class="min-h-screen bg-bembos-cream pb-40">
+    <!-- Header Azul -->
     <header class="bg-bembos-blue p-4 flex items-center gap-3 text-white sticky top-0 z-10 shadow-md">
       <button @click="$router.back()" class="w-11 h-11 flex items-center justify-center -ml-2 focus:ring-2 focus:ring-white rounded-full" aria-label="Volver al menú">
         <ChevronLeft class="w-6 h-6" />
@@ -7,7 +8,8 @@
       <h1 class="font-bold text-lg">{{ modoEdicion ? 'Editar pedido' : 'Personalizar' }}</h1>
     </header>
 
-    <div class="max-w-3xl mx-auto">
+    <!-- main para el Skip Link -->
+    <main id="contenido" tabindex="-1" class="max-w-3xl mx-auto outline-none">
       <div class="relative">
         <img :src="product.image_url" :alt="`Hamburguesa ${product.name}`" class="w-full h-48 md:h-64 object-cover" />
         <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white">
@@ -17,11 +19,12 @@
       </div>
 
       <div class="p-4 md:p-6 bg-white md:rounded-b-3xl shadow-lg -mt-4 relative z-10">
+        <!-- Banner Edición -->
         <div v-if="modoEdicion" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-3 rounded mb-6" role="status">
           Estás editando tu pedido. Tu configuración anterior ya está marcada.
         </div>
 
-        <!-- Stepper -->
+        <!-- Stepper Visual -->
         <div class="relative mb-8 px-2">
           <div class="absolute top-4 left-4 right-4 h-0.5 bg-blue-200 -z-10" aria-hidden="true"></div>
           <ol class="flex justify-between items-center" aria-label="Pasos de personalización">
@@ -71,7 +74,7 @@
                 ]"
               >
                 <div class="flex items-center gap-3">
-                  <!-- EL CAMBIO CLAVE: :disabled en el input -->
+                  <!-- Papas Rústicas deshabilitada -->
                   <input 
                     type="radio" 
                     :value="p.name" 
@@ -137,7 +140,7 @@
         </div>
 
       </div>
-    </div>
+    </main>
 
     <!-- FOOTER FLOTANTE -->
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 z-30 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
@@ -254,8 +257,7 @@ const precioTotal = computed(() => {
 });
 
 const pasoSiguiente = () => {
-  // Como el input ahora está deshabilitado, no se puede seleccionar.
-  // Pero por si acaso, validamos.
+  // Validación preventiva (aunque el input ya está deshabilitado)
   if (stepActivo.value === 2) {
     const opcionPapas = papas.find(p => p.name === papasSeleccionadas.value);
     if (opcionPapas?.disabled) {

@@ -4,7 +4,6 @@ import App from './App.vue';
 import router from './router';
 import './style.css';
 
-// Importar Toastification
 import Toast from 'vue-toastification';
 import 'vue-toastification/dist/index.css';
 
@@ -12,10 +11,9 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 
-// R3: Configuración de Toasts con roles de accesibilidad
 app.use(Toast, {
   position: 'top-center',
-  timeout: 10000, // R3: 10 segundos para leer
+  timeout: 10000,
   closeOnClick: true,
   pauseOnFocusLoss: true,
   pauseOnHover: true,
@@ -27,11 +25,9 @@ app.use(Toast, {
   icon: true,
   rtl: false,
   containerClassName: 'toast-a11y',
-  toastDefaults: {
-    error:   { role: 'alert',  timeout: false },
-    warning: { role: 'alert' },
-    success: { role: 'status' },
-    info:    { role: 'status' }
+  // La propiedad correcta para accesibilidad
+  accessibility: {
+    toastRole: 'alert' // Todos usan alert (el default de la librería)
   }
 });
 

@@ -1,5 +1,6 @@
 <template>
-  <div class="min-h-screen bg-bembos-cream flex flex-col items-center justify-center p-6 text-center">
+  <!-- main para el Skip Link -->
+  <main id="contenido" tabindex="-1" class="min-h-screen bg-bembos-cream flex flex-col items-center justify-center p-6 text-center outline-none">
     <div class="max-w-md w-full bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
       <div class="bg-green-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
         <Check class="w-12 h-12 text-green-600" aria-hidden="true" />
@@ -12,6 +13,7 @@
         <p class="text-2xl font-extrabold text-gray-900 mt-1">BEM-5734</p>
       </div>
 
+      <!-- QR -->
       <div class="mb-6 flex flex-col items-center">
         <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=BEM-5734" alt="Código QR para recoger tu pedido" class="w-32 h-32 rounded-lg border-4 border-white shadow-sm" />
         <p class="text-xs text-gray-500 mt-2">Muestra este QR al recoger</p>
@@ -19,7 +21,7 @@
 
       <p class="text-sm text-gray-700 mb-6 font-medium">Estará listo para recoger en <span class="font-bold text-bembos-blue">{{ sedeRecojo }}</span> en 20 minutos.</p>
 
-      <!-- R6: aria-expanded y aria-controls -->
+      <!-- Botón con aria-expanded y aria-controls -->
       <button 
         @click="mostrarResumen = !mostrarResumen" 
         :aria-expanded="mostrarResumen"
@@ -55,7 +57,7 @@
         Volver al menú
       </router-link>
     </div>
-  </div>
+  </main>
 </template>
 
 <script setup>
