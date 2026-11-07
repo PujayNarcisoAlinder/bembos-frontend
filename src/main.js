@@ -25,9 +25,12 @@ app.use(Toast, {
   icon: true,
   rtl: false,
   containerClassName: 'toast-a11y',
-  // La propiedad correcta para accesibilidad
   accessibility: {
-    toastRole: 'alert' // Todos usan alert (el default de la librería)
+    toastRole: 'alert'
+  },
+  // Los errores no se cierran solos (persistentes)
+  toastDefaults: {
+    error: { timeout: false }
   }
 });
 

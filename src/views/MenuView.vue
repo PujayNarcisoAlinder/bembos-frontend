@@ -7,7 +7,6 @@
       <!-- BARRA SECUNDARIA -->
       <div class="bg-gray-100 border-b border-gray-200 py-1.5">
         <div class="max-w-7xl mx-auto px-4 flex justify-between items-center text-[11px] font-bold">
-          <!-- Botón dirección a 44px -->
           <button class="bg-[#FFD200] text-blue-900 px-4 py-2 rounded-full flex items-center gap-1 hover:bg-yellow-400 transition min-h-[44px]">
             <MapPin class="w-3 h-3"/> Comienza tu pedido: Elige tu dirección
           </button>
@@ -59,8 +58,13 @@
           <ChevronRight class="w-6 h-6"/>
         </button>
 
-        <!-- Botón de pausa a 44px -->
-        <button @click="togglePausa" class="absolute bottom-3 right-4 bg-white/80 text-blue-900 rounded-full px-4 py-2 text-xs font-bold z-20 min-h-[44px] min-w-[44px]" :aria-label="pausado ? 'Reanudar el carrusel' : 'Pausar el carrusel'">
+        <!-- Botón Pausar solo visible si no hay reduced-motion -->
+        <button 
+          v-if="!tieneReducedMotion"
+          @click="togglePausa" 
+          class="absolute bottom-3 right-4 bg-white/80 text-blue-900 rounded-full px-4 py-2 text-xs font-bold z-20 min-h-[44px] min-w-[44px]" 
+          :aria-label="pausado ? 'Reanudar el carrusel' : 'Pausar el carrusel'"
+        >
           {{ pausado ? '▶ Reanudar' : '⏸ Pausar' }}
         </button>
 
@@ -78,7 +82,7 @@
         </div>
       </section>
 
-      <!-- CÁPSULAS DE CATEGORÍAS con secciones correctas y 44px -->
+      <!-- CÁPSULAS CON SECCIONES REALES -->
       <section class="bg-white py-4 shadow-sm relative z-10">
         <div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-center gap-3">
           <button 
@@ -92,12 +96,11 @@
         </div>
       </section>
 
-      <!-- SECCIÓN: PROMOCIONES -->
-      <section id="hamburguesas" class="max-w-7xl mx-auto px-4 py-8 w-full">
-        <h2 class="font-bold text-lg text-gray-800 uppercase mb-4 border-l-4 border-red-600 pl-3">Promociones</h2>
-        
+      <!-- SECCIÓN: CYBER BEMBOS -->
+      <section id="cyber-bembos" class="max-w-7xl mx-auto px-4 py-8 w-full">
+        <h2 class="font-bold text-lg text-gray-800 uppercase mb-4 border-l-4 border-red-600 pl-3">Cyber Bembos</h2>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          <article v-for="product in promociones" :key="product.id" class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center text-center hover:shadow-lg transition relative group">
+          <article v-for="product in cyberBembos" :key="product.id" class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center text-center hover:shadow-lg transition relative group">
             <span class="absolute top-2 right-2 bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded italic z-10">CYBER</span>
             
             <div class="w-full h-36 flex items-center justify-center mb-3 overflow-hidden">
@@ -125,30 +128,135 @@
         </div>
       </section>
 
-      <!-- SECCIÓN: LOS MÁS VENDIDOS -->
-      <section id="mas-vendidos" class="max-w-7xl mx-auto px-4 py-8 w-full mb-12">
-        <div class="flex justify-between items-end mb-4">
-          <h2 class="text-lg font-bold tracking-wide text-gray-800 uppercase">Los Más Vendidos</h2>
-          <div class="flex gap-2">
-            <button @click="scrollMasVendidos('left')" class="w-11 h-11 rounded-full border border-gray-500 text-gray-600 flex items-center justify-center hover:bg-gray-200" aria-label="Ver productos anteriores"><ChevronLeft class="w-4 h-4"/></button>
-            <button @click="scrollMasVendidos('right')" class="w-11 h-11 rounded-full border border-gray-500 text-gray-600 flex items-center justify-center hover:bg-gray-200" aria-label="Ver más productos"><ChevronRight class="w-4 h-4"/></button>
-          </div>
-        </div>
-        
-        <div ref="carouselMasVendidos" class="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory scrollbar-hide scroll-smooth">
-          <article v-for="product in masVendidos" :key="product.id" class="min-w-[220px] max-w-[220px] bg-white rounded-xl border border-gray-200 p-4 flex flex-col items-center text-center snap-start hover:shadow-md transition">
-            
-            <div class="w-full h-32 flex items-center justify-center mb-3 overflow-hidden">
-              <img :src="product.image_url" :alt="product.name" class="h-full object-contain hover:scale-110 transition duration-300" @error="(e) => e.target.src = 'https://placehold.co/400x400/FFC107/0000A0?text=' + encodeURIComponent(product.name)" />
+      <!-- SECCIÓN: LAS DEL BARRIO -->
+      <section id="las-del-barrio" class="max-w-7xl mx-auto px-4 py-8 w-full">
+        <h2 class="font-bold text-lg text-gray-800 uppercase mb-4 border-l-4 border-blue-600 pl-3">Las del Barrio</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <article v-for="product in lasDelBarrio" :key="product.id" class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center text-center hover:shadow-lg transition relative group">
+            <div class="w-full h-36 flex items-center justify-center mb-3 overflow-hidden">
+              <img :src="product.image_url" :alt="product.name" class="h-full object-contain group-hover:scale-110 transition duration-300" @error="(e) => e.target.src = 'https://placehold.co/400x400/FFC107/0000A0?text=' + encodeURIComponent(product.name)" />
             </div>
             
             <h3 class="font-bold text-sm text-gray-900 leading-tight mb-1 h-10 overflow-hidden">{{ product.name }}</h3>
             <p class="text-[10px] text-gray-500 mb-2 line-clamp-2 h-8">{{ product.description }}</p>
             
             <div class="mt-auto w-full flex flex-col items-center pt-2 border-t border-gray-100">
-              <div class="flex items-center justify-center gap-2 mb-2">
-                <span class="font-bold text-lg">S/{{ product.price.toFixed(2) }}</span>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="font-bold text-lg text-gray-900">S/{{ product.price.toFixed(2) }}</span>
+              </div>
+              <button 
+                @click="$router.push(`/product/${product.id}`)" 
+                class="bg-blue-600 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-700 transition"
+                :aria-label="`Personalizar ${product.name}`"
+              >
+                <ChevronRight class="w-6 h-6" />
+              </button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- SECCIÓN: PROMOS EXCLUSIVAS -->
+      <section id="promos-exclusivas" class="max-w-7xl mx-auto px-4 py-8 w-full">
+        <h2 class="font-bold text-lg text-gray-800 uppercase mb-4 border-l-4 border-red-600 pl-3">Promos Exclusivas</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <article v-for="product in promociones" :key="product.id" class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center text-center hover:shadow-lg transition relative group">
+            <div class="w-full h-36 flex items-center justify-center mb-3 overflow-hidden">
+              <img :src="product.image_url" :alt="product.name" class="h-full object-contain group-hover:scale-110 transition duration-300" @error="(e) => e.target.src = 'https://placehold.co/400x400/FFC107/0000A0?text=' + encodeURIComponent(product.name)" />
+            </div>
+            
+            <h3 class="font-bold text-sm text-gray-900 leading-tight mb-1 h-10 overflow-hidden">{{ product.name }}</h3>
+            <p class="text-[10px] text-gray-500 mb-2 line-clamp-2 h-8">{{ product.description }}</p>
+            
+            <div class="mt-auto w-full flex flex-col items-center pt-2 border-t border-gray-100">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="font-bold text-lg text-gray-900">S/{{ product.price.toFixed(2) }}</span>
                 <span v-if="product.old_price" class="text-xs text-gray-600 line-through">S/{{ product.old_price.toFixed(2) }}</span>
+                <span v-if="product.discount" class="bg-red-600 text-white text-[10px] font-bold px-1 rounded">{{ product.discount }}%</span>
+              </div>
+              <button 
+                @click="$router.push(`/product/${product.id}`)" 
+                class="bg-blue-600 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-700 transition"
+                :aria-label="`Personalizar ${product.name}`"
+              >
+                <ChevronRight class="w-6 h-6" />
+              </button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- SECCIÓN: COMBOS -->
+      <section id="combos" class="max-w-7xl mx-auto px-4 py-8 w-full">
+        <h2 class="font-bold text-lg text-gray-800 uppercase mb-4 border-l-4 border-blue-600 pl-3">Combos</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <article v-for="product in combos" :key="product.id" class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center text-center hover:shadow-lg transition relative group">
+            <div class="w-full h-36 flex items-center justify-center mb-3 overflow-hidden">
+              <img :src="product.image_url" :alt="product.name" class="h-full object-contain group-hover:scale-110 transition duration-300" @error="(e) => e.target.src = 'https://placehold.co/400x400/FFC107/0000A0?text=' + encodeURIComponent(product.name)" />
+            </div>
+            
+            <h3 class="font-bold text-sm text-gray-900 leading-tight mb-1 h-10 overflow-hidden">{{ product.name }}</h3>
+            <p class="text-[10px] text-gray-500 mb-2 line-clamp-2 h-8">{{ product.description }}</p>
+            
+            <div class="mt-auto w-full flex flex-col items-center pt-2 border-t border-gray-100">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="font-bold text-lg text-gray-900">S/{{ product.price.toFixed(2) }}</span>
+              </div>
+              <button 
+                @click="$router.push(`/product/${product.id}`)" 
+                class="bg-blue-600 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-700 transition"
+                :aria-label="`Personalizar ${product.name}`"
+              >
+                <ChevronRight class="w-6 h-6" />
+              </button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- SECCIÓN: HAMBURGUESAS -->
+      <section id="hamburguesas" class="max-w-7xl mx-auto px-4 py-8 w-full">
+        <h2 class="font-bold text-lg text-gray-800 uppercase mb-4 border-l-4 border-red-600 pl-3">Hamburguesas</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <article v-for="product in hamburguesas" :key="product.id" class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center text-center hover:shadow-lg transition relative group">
+            <div class="w-full h-36 flex items-center justify-center mb-3 overflow-hidden">
+              <img :src="product.image_url" :alt="product.name" class="h-full object-contain group-hover:scale-110 transition duration-300" @error="(e) => e.target.src = 'https://placehold.co/400x400/FFC107/0000A0?text=' + encodeURIComponent(product.name)" />
+            </div>
+            
+            <h3 class="font-bold text-sm text-gray-900 leading-tight mb-1 h-10 overflow-hidden">{{ product.name }}</h3>
+            <p class="text-[10px] text-gray-500 mb-2 line-clamp-2 h-8">{{ product.description }}</p>
+            
+            <div class="mt-auto w-full flex flex-col items-center pt-2 border-t border-gray-100">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="font-bold text-lg text-gray-900">S/{{ product.price.toFixed(2) }}</span>
+              </div>
+              <button 
+                @click="$router.push(`/product/${product.id}`)" 
+                class="bg-blue-600 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-700 transition"
+                :aria-label="`Personalizar ${product.name}`"
+              >
+                <ChevronRight class="w-6 h-6" />
+              </button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- SECCIÓN: LONCHERITA POR LA EDUCACIÓN -->
+      <section id="loncherita" class="max-w-7xl mx-auto px-4 py-8 w-full mb-12">
+        <h2 class="font-bold text-lg text-gray-800 uppercase mb-4 border-l-4 border-blue-600 pl-3">Loncherita por la Educación</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <article v-for="product in loncherita" :key="product.id" class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center text-center hover:shadow-lg transition relative group">
+            <div class="w-full h-36 flex items-center justify-center mb-3 overflow-hidden">
+              <img :src="product.image_url" :alt="product.name" class="h-full object-contain group-hover:scale-110 transition duration-300" @error="(e) => e.target.src = 'https://placehold.co/400x400/FFC107/0000A0?text=' + encodeURIComponent(product.name)" />
+            </div>
+            
+            <h3 class="font-bold text-sm text-gray-900 leading-tight mb-1 h-10 overflow-hidden">{{ product.name }}</h3>
+            <p class="text-[10px] text-gray-500 mb-2 line-clamp-2 h-8">{{ product.description }}</p>
+            
+            <div class="mt-auto w-full flex flex-col items-center pt-2 border-t border-gray-100">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="font-bold text-lg text-gray-900">S/{{ product.price.toFixed(2) }}</span>
               </div>
               <button 
                 @click="$router.push(`/product/${product.id}`)" 
@@ -173,8 +281,6 @@ import { getProducts } from '../services/api';
 import HeaderBembos from '../components/HeaderBembos.vue';
 
 const products = ref([]);
-const carouselMasVendidos = ref(null);
-
 const currentSlide = ref(0);
 let autoSlideInterval;
 const pausado = ref(false);
@@ -228,7 +334,7 @@ const prevSlide = () => {
 };
 
 const togglePausa = () => {
-  if (tieneReducedMotion) return; // No hacer nada si el usuario prefiere no moverse
+  if (tieneReducedMotion) return;
   pausado.value = !pausado.value;
   if (pausado.value) {
     clearInterval(autoSlideInterval);
@@ -250,22 +356,23 @@ onUnmounted(() => {
   clearInterval(autoSlideInterval);
 });
 
+// Categorías con secciones correctas
 const categorias = [
-  { name: 'Cyber Bembos', section: 'hamburguesas' },
-  { name: 'Las del Barrio', section: 'hamburguesas' },
-  { name: 'Promos Exclusivas', section: 'hamburguesas' },
-  { name: 'Combos', section: 'hamburguesas' },
+  { name: 'Cyber Bembos', section: 'cyber-bembos' },
+  { name: 'Las del Barrio', section: 'las-del-barrio' },
+  { name: 'Promos Exclusivas', section: 'promos-exclusivas' },
+  { name: 'Combos', section: 'combos' },
   { name: 'Hamburguesas', section: 'hamburguesas' },
-  { name: 'Loncherita por la Educación', section: 'hamburguesas' }
+  { name: 'Loncherita por la Educación', section: 'loncherita' }
 ];
 
-const promociones = computed(() => products.value.filter(p => p.category === 'Recomendados').slice(0, 5));
-const masVendidos = computed(() => products.value.filter(p => p.category === 'Más Vendidos'));
-
-const scrollMasVendidos = (direction) => {
-  const el = carouselMasVendidos.value;
-  if (el) el.scrollBy({ left: direction === 'left' ? -240 : 240, behavior: 'smooth' });
-};
+// Filtros de productos por categoría
+const cyberBembos = computed(() => products.value.filter(p => p.category === 'Recomendados').slice(0, 5));
+const lasDelBarrio = computed(() => products.value.filter(p => p.category === 'Recomendados').slice(5, 10));
+const promociones = computed(() => products.value.filter(p => p.category === 'Recomendados'));
+const combos = computed(() => products.value.filter(p => p.category === 'Combos'));
+const hamburguesas = computed(() => products.value.filter(p => p.category === 'Hamburguesas'));
+const loncherita = computed(() => products.value.filter(p => p.category === 'Más Vendidos'));
 
 const scrollToSection = (id) => {
   const el = document.getElementById(id);

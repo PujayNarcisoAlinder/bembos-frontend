@@ -1,13 +1,15 @@
 <template>
   <div class="min-h-screen bg-bembos-cream pb-24">
     <header class="bg-bembos-blue p-4 flex items-center gap-3 text-white sticky top-0 z-10 shadow-md">
-      <button @click="$router.back()" class="p-2 -ml-2 focus:ring-2 focus:ring-white rounded-full" aria-label="Volver">
+      <!-- Botón Volver a 44px -->
+      <button @click="$router.back()" class="w-11 h-11 flex items-center justify-center -ml-2 focus:ring-2 focus:ring-white rounded-full" aria-label="Volver">
         <ChevronLeft class="w-6 h-6" />
       </button>
       <h1 class="font-bold text-lg">Tu pedido</h1>
     </header>
 
-    <main class="max-w-3xl mx-auto p-4 md:p-6">
+    <!-- main con id="contenido" para el Skip Link -->
+    <main id="contenido" tabindex="-1" class="max-w-3xl mx-auto p-4 md:p-6 outline-none">
       <div v-if="cartStore.items.length === 0" class="flex flex-col items-center justify-center pt-32 text-center">
         <div class="w-24 h-24 bg-bembos-yellow rounded-full flex items-center justify-center mb-6 shadow-inner">
           <ShoppingCart class="w-12 h-12 text-bembos-black" aria-hidden="true" />
@@ -62,7 +64,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import { ChevronLeft, ShoppingCart, Pencil, Trash2 } from 'lucide-vue-next';
 import { useCartStore } from '../store/cart';
 import { useRouter } from 'vue-router';
@@ -73,7 +75,6 @@ const router = useRouter();
 const toast = useToast();
 
 onMounted(() => {
-  // R7: Limpiamos el aviso después de 3 segundos
   cartStore.items.forEach(item => {
     if (item.justEdited) {
       setTimeout(() => { item.justEdited = false; }, 3000);

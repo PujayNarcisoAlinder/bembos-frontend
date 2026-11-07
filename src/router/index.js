@@ -26,17 +26,24 @@ const titulos = {
   '/confirm':  'Pedido confirmado — Bembos'
 };
 
+// Reintenta enfocar el h1 hasta que aparezca (para /product con fetch lento)
+const focusH1 = (intentos = 0) => {
+  const h1 = document.querySelector('h1');
+  if (h1) {
+    h1.setAttribute('tabindex', '-1');
+    h1.focus({ preventScroll: true });
+    return;
+  }
+  if (intentos < 20) { // 20 * 50ms = 1 segundo máximo de reintento
+    setTimeout(() => focusH1(intentos + 1), 50);
+  }
+};
+
 router.afterEach((to) => {
   document.title = titulos[to.path]
     || (to.path.startsWith('/product') ? 'Personalizar tu producto — Bembos' : 'Bembos');
-
-  // Esperar a que Vue renderice el DOM (especialmente en /product donde hay v-if)
-  setTimeout(() => {
-    const h1 = document.querySelector('h1');
-    if (!h1) return;
-    h1.setAttribute('tabindex', '-1');
-    h1.focus({ preventScroll: true });
-  }, 150); // 150ms es suficiente para que el producto se cargue
+  
+  focusH1();
 });
 
 export default router;
