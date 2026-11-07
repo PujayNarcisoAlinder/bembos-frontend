@@ -88,7 +88,7 @@
           </p>
           <div>
             <label for="card-number" class="text-sm font-bold text-gray-800">Número de tarjeta</label>
-            <input id="card-number" v-model="cardNumber" @input="formatCardNumber" maxlength="19"
+            <input id="card-number" v-model="cardNumber" @input="formatCardNumber" maxlength="19" autocomplete="cc-number" inputmode="numeric"
               :aria-invalid="errores.cardNumber ? 'true' : undefined"
               :aria-describedby="errores.cardNumber ? 'err-card-number' : undefined"
               :class="['w-full border-2 rounded-lg p-3 text-base mt-1 outline-none placeholder:text-gray-600 focus:border-bembos-blue focus:ring-2 focus:ring-blue-200', errores.cardNumber ? 'border-red-700' : 'border-gray-500']"
@@ -98,7 +98,7 @@
           <div class="flex gap-3">
             <div class="flex-1">
               <label for="card-expiry" class="text-sm font-bold text-gray-800">Fecha (MM/AA)</label>
-              <input id="card-expiry" v-model="cardExpiry" @input="formatExpiry" maxlength="5"
+              <input id="card-expiry" v-model="cardExpiry" @input="formatExpiry" maxlength="5" autocomplete="cc-exp" inputmode="numeric"
                 :aria-invalid="errores.cardExpiry ? 'true' : undefined"
                 :aria-describedby="errores.cardExpiry ? 'err-card-expiry' : undefined"
                 :class="['w-full border-2 rounded-lg p-3 text-base mt-1 outline-none placeholder:text-gray-600 focus:border-bembos-blue focus:ring-2 focus:ring-blue-200', errores.cardExpiry ? 'border-red-700' : 'border-gray-500']"
@@ -107,7 +107,7 @@
             </div>
             <div class="flex-1">
               <label for="card-cvv" class="text-sm font-bold text-gray-800">CVV</label>
-              <input id="card-cvv" v-model="cardCvv" type="password" maxlength="4"
+              <input id="card-cvv" v-model="cardCvv" type="password" maxlength="4" autocomplete="cc-csc" inputmode="numeric"
                 :aria-invalid="errores.cardCvv ? 'true' : undefined"
                 :aria-describedby="errores.cardCvv ? 'err-card-cvv' : undefined"
                 :class="['w-full border-2 rounded-lg p-3 text-base mt-1 outline-none placeholder:text-gray-600 focus:border-bembos-blue focus:ring-2 focus:ring-blue-200', errores.cardCvv ? 'border-red-700' : 'border-gray-500']"
