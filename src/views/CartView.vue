@@ -26,11 +26,13 @@
               <p class="text-xs text-gray-700 leading-tight mt-1">{{ item.customizations?.tamano }}</p>
               <p class="text-xs text-gray-700 leading-tight">{{ item.customizations?.papas }}</p>
               <p class="text-xs text-gray-700 leading-tight">Salsas: {{ item.customizations?.salsas?.join(', ') || 'Ninguna' }}</p>
-              <span v-if="modoEdicionId === item.id" class="text-green-700 text-xs font-bold mt-2 block" role="status">✓ Configuración actualizada</span>
+              <!-- La región se monta siempre, aunque vacía: si apareciera junto con su
+                   texto el lector de pantalla no tendría nada que anunciar. -->
+              <span class="text-green-700 text-xs font-bold block" role="status">{{ modoEdicionId === item.id ? '✓ Configuración actualizada' : '' }}</span>
             </div>
           </div>
           <div class="flex justify-between items-center mt-3 border-t pt-3">
-            <div class="flex items-center gap-3 bg-gray-100 rounded-full p-1 border border-gray-300">
+            <div class="flex items-center gap-3 bg-gray-100 rounded-full p-1 border border-gray-500">
               <button @click="decrementar(item)" class="w-11 h-11 flex items-center justify-center font-bold text-xl text-bembos-black rounded-full hover:bg-gray-200 focus:ring-2 focus:ring-bembos-blue" aria-label="Quitar uno">−</button>
               <span class="text-base font-bold w-6 text-center" aria-live="polite">{{ item.quantity }}</span>
               <button @click="incrementar(item)" class="w-11 h-11 bg-bembos-black text-white rounded-full font-bold flex items-center justify-center text-xl hover:bg-gray-800 focus:ring-2 focus:ring-bembos-blue" aria-label="Agregar uno">+</button>
@@ -38,7 +40,7 @@
             <span class="font-bold text-lg text-gray-900">S/{{ (item.price * item.quantity).toFixed(2) }}</span>
           </div>
           <div class="flex gap-3 mt-4">
-            <button @click="editarItem(item.id)" class="flex-1 border-2 border-gray-400 rounded-xl py-3 text-sm font-bold text-gray-700 flex items-center justify-center gap-2 min-h-[44px] hover:bg-gray-50 focus:ring-2 focus:ring-gray-400">
+            <button @click="editarItem(item.id)" class="flex-1 border-2 border-gray-500 rounded-xl py-3 text-sm font-bold text-gray-700 flex items-center justify-center gap-2 min-h-[44px] hover:bg-gray-50 focus:ring-2 focus:ring-gray-400">
               <Pencil class="w-4 h-4" aria-hidden="true" /> Editar
             </button>
             <button @click="eliminarItem(item.id)" class="flex-1 bg-red-50 text-red-700 border-2 border-red-200 rounded-xl py-3 text-sm font-bold flex items-center justify-center gap-2 min-h-[44px] hover:bg-red-100 focus:ring-2 focus:ring-red-400">
@@ -62,7 +64,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { ChevronLeft, ShoppingCart, Pencil, Trash2 } from 'lucide-vue-next';
 import { useCartStore } from '../store/cart';
 import { useRouter } from 'vue-router';
@@ -91,8 +93,43 @@ const eliminarItem = (id) => {
   toast.info('Producto eliminado del carrito.');
 };
 
+// El componente se desmonta al ir a personalizar, así que la marca de edición no
+// puede vivir en un ref: se guarda fuera y se lee al volver a montar.
+const CLAVE_EDICION = 'bembos:edicion';
+const RETARDO_AVISO_MS = 150;
+
+const firmaItem = (item) => JSON.stringify({
+  customizations: item.customizations,
+  quantity: item.quantity,
+  price: item.price,
+});
+
 const editarItem = (id) => {
-  modoEdicionId.value = id;
+  const item = cartStore.items.find((i) => i.id === id);
+  if (item) {
+    sessionStorage.setItem(CLAVE_EDICION, JSON.stringify({ id, firma: firmaItem(item) }));
+  }
   router.push(`/product/${id}?edit=${id}`);
 };
+
+onMounted(() => {
+  const marca = sessionStorage.getItem(CLAVE_EDICION);
+  if (!marca) return;
+  sessionStorage.removeItem(CLAVE_EDICION);
+
+  let datos;
+  try {
+    datos = JSON.parse(marca);
+  } catch {
+    return;
+  }
+
+  const item = cartStore.items.find((i) => i.id === datos.id);
+  // Sin cambios en el ítem no hubo edición que anunciar: el usuario solo volvió.
+  if (!item || firmaItem(item) === datos.firma) return;
+
+  setTimeout(() => {
+    modoEdicionId.value = item.id;
+  }, RETARDO_AVISO_MS);
+});
 </script>
