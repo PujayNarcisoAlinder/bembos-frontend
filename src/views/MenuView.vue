@@ -58,7 +58,6 @@
           <ChevronRight class="w-6 h-6"/>
         </button>
 
-        <!-- Botón Pausar solo visible si no hay reduced-motion -->
         <button 
           v-if="!tieneReducedMotion"
           @click="togglePausa" 
@@ -82,7 +81,7 @@
         </div>
       </section>
 
-      <!-- CÁPSULAS CON SECCIONES REALES -->
+      <!-- CÁPSULAS CON SECCIONES REALES (sin Las del Barrio) -->
       <section class="bg-white py-4 shadow-sm relative z-10">
         <div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-center gap-3">
           <button 
@@ -115,34 +114,6 @@
                 <span class="font-bold text-lg text-gray-900">S/{{ product.price.toFixed(2) }}</span>
                 <span v-if="product.old_price" class="text-xs text-gray-600 line-through">S/{{ product.old_price.toFixed(2) }}</span>
                 <span v-if="product.discount" class="bg-red-600 text-white text-[10px] font-bold px-1 rounded">{{ product.discount }}%</span>
-              </div>
-              <button 
-                @click="$router.push(`/product/${product.id}`)" 
-                class="bg-blue-600 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-700 transition"
-                :aria-label="`Personalizar ${product.name}`"
-              >
-                <ChevronRight class="w-6 h-6" />
-              </button>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <!-- SECCIÓN: LAS DEL BARRIO -->
-      <section id="las-del-barrio" class="max-w-7xl mx-auto px-4 py-8 w-full">
-        <h2 class="font-bold text-lg text-gray-800 uppercase mb-4 border-l-4 border-blue-600 pl-3">Las del Barrio</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          <article v-for="product in lasDelBarrio" :key="product.id" class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center text-center hover:shadow-lg transition relative group">
-            <div class="w-full h-36 flex items-center justify-center mb-3 overflow-hidden">
-              <img :src="product.image_url" :alt="product.name" class="h-full object-contain group-hover:scale-110 transition duration-300" @error="(e) => e.target.src = 'https://placehold.co/400x400/FFC107/0000A0?text=' + encodeURIComponent(product.name)" />
-            </div>
-            
-            <h3 class="font-bold text-sm text-gray-900 leading-tight mb-1 h-10 overflow-hidden">{{ product.name }}</h3>
-            <p class="text-[10px] text-gray-500 mb-2 line-clamp-2 h-8">{{ product.description }}</p>
-            
-            <div class="mt-auto w-full flex flex-col items-center pt-2 border-t border-gray-100">
-              <div class="flex items-center gap-2 mb-2">
-                <span class="font-bold text-lg text-gray-900">S/{{ product.price.toFixed(2) }}</span>
               </div>
               <button 
                 @click="$router.push(`/product/${product.id}`)" 
@@ -356,10 +327,9 @@ onUnmounted(() => {
   clearInterval(autoSlideInterval);
 });
 
-// Categorías con secciones correctas
+// Categorías con secciones correctas (SIN Las del Barrio)
 const categorias = [
   { name: 'Cyber Bembos', section: 'cyber-bembos' },
-  { name: 'Las del Barrio', section: 'las-del-barrio' },
   { name: 'Promos Exclusivas', section: 'promos-exclusivas' },
   { name: 'Combos', section: 'combos' },
   { name: 'Hamburguesas', section: 'hamburguesas' },
@@ -367,9 +337,8 @@ const categorias = [
 ];
 
 // Filtros de productos por categoría
-const cyberBembos = computed(() => products.value.filter(p => p.category === 'Recomendados').slice(0, 5));
-const lasDelBarrio = computed(() => products.value.filter(p => p.category === 'Recomendados').slice(5, 10));
-const promociones = computed(() => products.value.filter(p => p.category === 'Recomendados'));
+const cyberBembos = computed(() => products.value.filter(p => p.category === 'Recomendados'));
+const promociones = computed(() => products.value.filter(p => p.category === 'Promos Exclusivas'));
 const combos = computed(() => products.value.filter(p => p.category === 'Combos'));
 const hamburguesas = computed(() => products.value.filter(p => p.category === 'Hamburguesas'));
 const loncherita = computed(() => products.value.filter(p => p.category === 'Más Vendidos'));
