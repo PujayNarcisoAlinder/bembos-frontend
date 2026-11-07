@@ -56,11 +56,14 @@
 
       <!-- Pago -->
       <div class="bg-white rounded-2xl p-5 shadow-sm">
-        <h2 class="font-bold text-lg mb-3 text-gray-900">Método de pago</h2>
-        <div v-for="metodo in metodosPago" :key="metodo"
-          @click="metodoPago = metodo"
-          :class="['border-2 rounded-xl p-4 mb-3 cursor-pointer text-base font-semibold transition min-h-[52px] flex items-center', metodoPago === metodo ? 'bg-yellow-50 border-bembos-yellow text-bembos-black' : 'border-gray-300 text-gray-700 hover:bg-gray-50']">
-          {{ metodo }}
+        <h2 id="pago-label" class="font-bold text-lg mb-3 text-gray-900">Método de pago</h2>
+        <div role="radiogroup" aria-labelledby="pago-label" class="space-y-3">
+          <label v-for="metodo in metodosPago" :key="metodo"
+            :class="['border-2 rounded-xl p-4 cursor-pointer text-base font-semibold transition min-h-[52px] flex items-center gap-3', metodoPago === metodo ? 'bg-yellow-50 border-amber-600 text-bembos-black' : 'border-gray-500 text-gray-700 hover:bg-gray-50']">
+            <input type="radio" name="metodo-pago" :value="metodo" v-model="metodoPago" class="accent-bembos-blue w-5 h-5 focus:ring-2 focus:ring-bembos-blue" />
+            <span>{{ metodo }}</span>
+            <Check v-if="metodoPago === metodo" class="w-5 h-5 ml-auto text-amber-700" aria-hidden="true" />
+          </label>
         </div>
 
         <!-- Campos de tarjeta -->
@@ -104,7 +107,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { ChevronLeft } from 'lucide-vue-next';
+import { ChevronLeft, Check } from 'lucide-vue-next';
 import { useCartStore } from '../store/cart';
 import { createOrder } from '../services/api';
 import { useToast } from 'vue-toastification';
