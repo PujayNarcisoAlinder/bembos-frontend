@@ -28,7 +28,6 @@ app.use(Toast, {
   accessibility: {
     toastRole: 'alert'
   },
-  // Los errores no se cierran solos (persistentes)
   toastDefaults: {
     error: { timeout: false }
   }

@@ -48,7 +48,7 @@
             <div class="space-y-3">
               <label v-for="t in tamanos" :key="t.name" class="flex items-center justify-between p-4 bg-white rounded-xl border-2 cursor-pointer transition min-h-[44px]" :class="tamano === t.name ? 'border-amber-600 bg-yellow-50' : 'border-gray-500 hover:border-gray-600'">
                 <div class="flex items-center gap-3">
-                  <input type="radio" :value="t.name" v-model="tamano" class="accent-bembos-yellow w-5 h-5" />
+                  <input type="radio" name="tamano" :value="t.name" v-model="tamano" class="accent-bembos-yellow w-5 h-5" />
                   <span class="text-base font-medium text-gray-800">{{ t.name }}</span>
                 </div>
               </label>
@@ -74,9 +74,9 @@
                 ]"
               >
                 <div class="flex items-center gap-3">
-                  <!-- Papas Rústicas deshabilitada -->
                   <input 
                     type="radio" 
+                    name="papas" 
                     :value="p.name" 
                     v-model="papasSeleccionadas" 
                     :disabled="p.disabled"
@@ -98,7 +98,7 @@
             </legend>
             <div class="space-y-3">
               <label v-for="s in salsas" :key="s.name" class="flex items-center gap-3 p-4 bg-white rounded-xl border-2 cursor-pointer transition min-h-[44px]" :class="salsasSeleccionadas.includes(s.name) ? 'border-amber-600 bg-yellow-50' : 'border-gray-500 hover:border-gray-600'">
-                <input type="checkbox" :value="s.name" v-model="salsasSeleccionadas" class="accent-bembos-yellow w-5 h-5 rounded" />
+                <input type="checkbox" name="salsas" :value="s.name" v-model="salsasSeleccionadas" class="accent-bembos-yellow w-5 h-5 rounded" />
                 <span class="text-base font-medium text-gray-800">{{ s.name }}</span>
               </label>
             </div>
@@ -114,7 +114,7 @@
             <p class="text-xs text-gray-600 mb-3">Toca para quitar un ingrediente de tu hamburguesa.</p>
             <div class="space-y-3">
               <label v-for="i in ingredientes" :key="i.name" class="flex items-center gap-3 p-4 bg-white rounded-xl border-2 cursor-pointer transition min-h-[44px]" :class="ingredientesSeleccionados.includes(i.name) ? 'border-amber-600 bg-yellow-50' : 'border-gray-500 hover:border-gray-600'">
-                <input type="checkbox" :value="i.name" v-model="ingredientesSeleccionados" class="accent-bembos-yellow w-5 h-5 rounded" />
+                <input type="checkbox" name="ingredientes" :value="i.name" v-model="ingredientesSeleccionados" class="accent-bembos-yellow w-5 h-5 rounded" />
                 <span class="text-base font-medium text-gray-800">{{ i.name }}</span>
               </label>
             </div>
@@ -130,7 +130,7 @@
             <div class="space-y-3">
               <label v-for="e in extras" :key="e.name" class="flex items-center justify-between p-4 bg-white rounded-xl border-2 cursor-pointer transition min-h-[44px]" :class="extrasSeleccionados.includes(e.name) ? 'border-amber-600 bg-yellow-50' : 'border-gray-500 hover:border-gray-600'">
                 <div class="flex items-center gap-3">
-                  <input type="checkbox" :value="e.name" v-model="extrasSeleccionados" class="accent-bembos-yellow w-5 h-5 rounded" />
+                  <input type="checkbox" name="extras" :value="e.name" v-model="extrasSeleccionados" class="accent-bembos-yellow w-5 h-5 rounded" />
                   <span class="text-base font-medium text-gray-800">{{ e.name }}</span>
                 </div>
                 <span class="text-sm font-bold text-gray-700">+ S/{{ e.price.toFixed(2) }}</span>
@@ -208,9 +208,10 @@ const cantidad = ref(1);
 const steps = ['Tamaño', 'Papas', 'Salsas', 'Ingredientes', 'Extras'];
 const stepActivo = ref(1);
 
-const tamano = ref('Cheese mediana, incluida');
-const papasSeleccionadas = ref('Papas medianas, incluidas');
-const salsasSeleccionadas = ref(['Mayonesa']);
+// Sin selección por defecto
+const tamano = ref('');
+const papasSeleccionadas = ref('');
+const salsasSeleccionadas = ref([]);
 const ingredientesSeleccionados = ref([]);
 const extrasSeleccionados = ref([]);
 
@@ -218,7 +219,7 @@ const tamanos = [{ name: 'Cheese mediana, incluida' }, { name: 'Cheese grande, +
 const papas = [
   { name: 'Papas medianas, incluidas', disabled: false }, 
   { name: 'Papas grandes, + S/4.00', disabled: false }, 
-  { name: 'Papas rústicas, + S/4.00', disabled: true } // Deshabilitada de verdad
+  { name: 'Papas rústicas, + S/4.00', disabled: true }
 ];
 const salsas = [{ name: 'Mayonesa' }, { name: 'Ketchup' }, { name: 'Ají' }, { name: 'Salsa Bembos' }];
 const ingredientes = [{ name: 'Sin lechuga' }, { name: 'Sin tomate' }, { name: 'Sin cebolla' }, { name: 'Sin pepinillos' }];
@@ -233,19 +234,19 @@ onMounted(async () => {
     const item = cartStore.items.find(i => i.id === parseInt(route.query.edit));
     if (item && item.customizations) {
       cantidad.value = item.quantity;
-      tamano.value = item.customizations.tamano || tamano.value;
-      papasSeleccionadas.value = item.customizations.papas || papasSeleccionadas.value;
-      salsasSeleccionadas.value = item.customizations.salsas || salsasSeleccionadas.value;
-      ingredientesSeleccionados.value = item.customizations.ingredientes || ingredientesSeleccionados.value;
-      extrasSeleccionados.value = item.customizations.extras || extrasSeleccionados.value;
+      tamano.value = item.customizations.tamano || '';
+      papasSeleccionadas.value = item.customizations.papas || '';
+      salsasSeleccionadas.value = item.customizations.salsas || [];
+      ingredientesSeleccionados.value = item.customizations.ingredientes || [];
+      extrasSeleccionados.value = item.customizations.extras || [];
     }
   }
 });
 
 const precioTotal = computed(() => {
   let extra = 0;
-  if (tamano.value.includes('grande')) extra += 3;
-  if (papasSeleccionadas.value.includes('grandes') || papasSeleccionadas.value.includes('rústicas')) extra += 4;
+  if (tamano.value && tamano.value.includes('grande')) extra += 3;
+  if (papasSeleccionadas.value && (papasSeleccionadas.value.includes('grandes') || papasSeleccionadas.value.includes('rústicas'))) extra += 4;
   
   extrasSeleccionados.value.forEach(extraName => {
     const found = extras.find(e => e.name === extraName);
@@ -257,8 +258,18 @@ const precioTotal = computed(() => {
 });
 
 const pasoSiguiente = () => {
-  // Validación preventiva (aunque el input ya está deshabilitado)
+  // Validar paso 1: Tamaño obligatorio
+  if (stepActivo.value === 1 && !tamano.value) {
+    toast.warning('Por favor, selecciona un tamaño.');
+    return;
+  }
+
+  // Validar paso 2: Papas obligatorias
   if (stepActivo.value === 2) {
+    if (!papasSeleccionadas.value) {
+      toast.warning('Por favor, selecciona un tipo de papas.');
+      return;
+    }
     const opcionPapas = papas.find(p => p.name === papasSeleccionadas.value);
     if (opcionPapas?.disabled) {
       toast.warning('Las papas rústicas no están disponibles. Elige otra opción.');
@@ -280,10 +291,22 @@ const pasoAnterior = () => {
 };
 
 const guardar = () => {
+  // Validaciones finales
+  if (!tamano.value) {
+    toast.warning('Por favor, selecciona un tamaño.');
+    stepActivo.value = 1;
+    return;
+  }
+  if (!papasSeleccionadas.value) {
+    toast.warning('Por favor, selecciona un tipo de papas.');
+    stepActivo.value = 2;
+    return;
+  }
+
   const opcionPapas = papas.find(p => p.name === papasSeleccionadas.value);
-  
   if (opcionPapas?.disabled) {
     toast.warning('Las papas rústicas no están disponibles en este local.');
+    stepActivo.value = 2;
     return;
   }
 

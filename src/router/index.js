@@ -4,6 +4,7 @@ import ProductView from '../views/ProductView.vue';
 import CartView from '../views/CartView.vue';
 import CheckoutView from '../views/CheckoutView.vue';
 import ConfirmView from '../views/ConfirmView.vue';
+import NotFoundView from '../views/NotFoundView.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -13,20 +14,13 @@ const router = createRouter({
     { path: '/cart', component: CartView },
     { path: '/checkout', component: CheckoutView },
     { path: '/confirm', component: ConfirmView },
+    { path: '/:pathMatch(.*)*', component: NotFoundView },
   ],
   scrollBehavior() {
     return { top: 0 };
   }
 });
 
-const titulos = {
-  '/':         'Menú — Bembos',
-  '/cart':     'Tu pedido — Bembos',
-  '/checkout': 'Pagar — Bembos',
-  '/confirm':  'Pedido confirmado — Bembos'
-};
-
-// Reintenta enfocar el h1 hasta que aparezca (para /product con fetch lento)
 const focusH1 = (intentos = 0) => {
   const h1 = document.querySelector('h1');
   if (h1) {
@@ -34,15 +28,26 @@ const focusH1 = (intentos = 0) => {
     h1.focus({ preventScroll: true });
     return;
   }
-  if (intentos < 20) { // 20 * 50ms = 1 segundo máximo de reintento
+  if (intentos < 20) {
     setTimeout(() => focusH1(intentos + 1), 50);
   }
 };
 
 router.afterEach((to) => {
-  document.title = titulos[to.path]
-    || (to.path.startsWith('/product') ? 'Personalizar tu producto — Bembos' : 'Bembos');
-  
+  if (to.path === '/') {
+    document.title = 'Menú — Bembos';
+  } else if (to.path.startsWith('/product')) {
+    document.title = to.query.edit ? 'Editar pedido — Bembos' : 'Personalizar tu producto — Bembos';
+  } else if (to.path === '/cart') {
+    document.title = 'Tu pedido — Bembos';
+  } else if (to.path === '/checkout') {
+    document.title = 'Pagar — Bembos';
+  } else if (to.path === '/confirm') {
+    document.title = 'Pedido confirmado — Bembos';
+  } else {
+    document.title = 'Página no encontrada — Bembos';
+  }
+
   focusH1();
 });
 
