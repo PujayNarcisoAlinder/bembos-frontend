@@ -105,7 +105,7 @@
           <label v-for="metodo in metodosPago" :key="metodo"
             class="border-2 rounded-xl p-4 cursor-pointer text-base font-semibold transition min-h-[52px] flex items-center gap-3"
             :class="metodoPago === metodo ? 'bg-yellow-50 border-amber-600 text-bembos-black' : 'border-gray-500 text-gray-700 hover:bg-gray-50'">
-            <input type="radio" :value="metodo" v-model="metodoPago" class="accent-bembos-yellow w-5 h-5" />
+            <input type="radio" name="metodo-pago" :value="metodo" v-model="metodoPago" class="accent-bembos-yellow w-5 h-5" />
             <span>{{ metodo }}</span>
             <Check v-if="metodoPago === metodo" class="w-5 h-5 ml-auto text-amber-700" aria-hidden="true" />
           </label>

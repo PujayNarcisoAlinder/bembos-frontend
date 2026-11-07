@@ -45,7 +45,8 @@
                 </div>
               </div>
               <div class="w-1/2 flex justify-center items-center relative p-4">
-                <img :src="banner.img" :alt="banner.title" class="h-[80%] md:h-[90%] object-contain drop-shadow-2xl" />
+                <!-- alt descriptivo -->
+                <img :src="banner.img" :alt="banner.alt" class="h-[80%] md:h-[90%] object-contain drop-shadow-2xl" />
               </div>
             </div>
           </div>
@@ -81,7 +82,7 @@
         </div>
       </section>
 
-      <!-- CÁPSULAS -->
+      <!-- CÁPSULAS CON SECCIONES REALES -->
       <section class="bg-white py-4 shadow-sm relative z-10">
         <div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-center gap-3">
           <button 
@@ -101,18 +102,25 @@
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <article v-for="product in cyberBembos" :key="product.id" class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center text-center hover:shadow-lg transition relative group">
             <span class="absolute top-2 right-2 bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded italic z-10">CYBER</span>
+            
             <div class="w-full h-36 flex items-center justify-center mb-3 overflow-hidden">
               <img :src="product.image_url" :alt="product.name" class="h-full object-contain group-hover:scale-110 transition duration-300" @error="(e) => e.target.src = 'https://placehold.co/400x400/FFC107/0000A0?text=' + encodeURIComponent(product.name)" />
             </div>
+            
             <h3 class="font-bold text-sm text-gray-900 leading-tight mb-1 h-10 overflow-hidden">{{ product.name }}</h3>
             <p class="text-[10px] text-gray-500 mb-2 line-clamp-2 h-8">{{ product.description }}</p>
+            
             <div class="mt-auto w-full flex flex-col items-center pt-2 border-t border-gray-100">
               <div class="flex items-center gap-2 mb-2">
                 <span class="font-bold text-lg text-gray-900">S/{{ product.price.toFixed(2) }}</span>
                 <span v-if="product.old_price" class="text-xs text-gray-600 line-through">S/{{ product.old_price.toFixed(2) }}</span>
                 <span v-if="product.discount" class="bg-red-600 text-white text-[10px] font-bold px-1 rounded">{{ product.discount }}%</span>
               </div>
-              <button @click="$router.push(`/product/${product.id}`)" class="bg-blue-600 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-700 transition" :aria-label="`Personalizar ${product.name}`">
+              <button 
+                @click="$router.push(`/product/${product.id}`)" 
+                class="bg-blue-600 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-700 transition"
+                :aria-label="`Personalizar ${product.name}`"
+              >
                 <ChevronRight class="w-6 h-6" />
               </button>
             </div>
@@ -128,15 +136,21 @@
             <div class="w-full h-36 flex items-center justify-center mb-3 overflow-hidden">
               <img :src="product.image_url" :alt="product.name" class="h-full object-contain group-hover:scale-110 transition duration-300" @error="(e) => e.target.src = 'https://placehold.co/400x400/FFC107/0000A0?text=' + encodeURIComponent(product.name)" />
             </div>
+            
             <h3 class="font-bold text-sm text-gray-900 leading-tight mb-1 h-10 overflow-hidden">{{ product.name }}</h3>
             <p class="text-[10px] text-gray-500 mb-2 line-clamp-2 h-8">{{ product.description }}</p>
+            
             <div class="mt-auto w-full flex flex-col items-center pt-2 border-t border-gray-100">
               <div class="flex items-center gap-2 mb-2">
                 <span class="font-bold text-lg text-gray-900">S/{{ product.price.toFixed(2) }}</span>
                 <span v-if="product.old_price" class="text-xs text-gray-600 line-through">S/{{ product.old_price.toFixed(2) }}</span>
                 <span v-if="product.discount" class="bg-red-600 text-white text-[10px] font-bold px-1 rounded">{{ product.discount }}%</span>
               </div>
-              <button @click="$router.push(`/product/${product.id}`)" class="bg-blue-600 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-700 transition" :aria-label="`Personalizar ${product.name}`">
+              <button 
+                @click="$router.push(`/product/${product.id}`)" 
+                class="bg-blue-600 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-700 transition"
+                :aria-label="`Personalizar ${product.name}`"
+              >
                 <ChevronRight class="w-6 h-6" />
               </button>
             </div>
@@ -152,13 +166,19 @@
             <div class="w-full h-36 flex items-center justify-center mb-3 overflow-hidden">
               <img :src="product.image_url" :alt="product.name" class="h-full object-contain group-hover:scale-110 transition duration-300" @error="(e) => e.target.src = 'https://placehold.co/400x400/FFC107/0000A0?text=' + encodeURIComponent(product.name)" />
             </div>
+            
             <h3 class="font-bold text-sm text-gray-900 leading-tight mb-1 h-10 overflow-hidden">{{ product.name }}</h3>
             <p class="text-[10px] text-gray-500 mb-2 line-clamp-2 h-8">{{ product.description }}</p>
+            
             <div class="mt-auto w-full flex flex-col items-center pt-2 border-t border-gray-100">
               <div class="flex items-center gap-2 mb-2">
                 <span class="font-bold text-lg text-gray-900">S/{{ product.price.toFixed(2) }}</span>
               </div>
-              <button @click="$router.push(`/product/${product.id}`)" class="bg-blue-600 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-700 transition" :aria-label="`Personalizar ${product.name}`">
+              <button 
+                @click="$router.push(`/product/${product.id}`)" 
+                class="bg-blue-600 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-700 transition"
+                :aria-label="`Personalizar ${product.name}`"
+              >
                 <ChevronRight class="w-6 h-6" />
               </button>
             </div>
@@ -174,13 +194,19 @@
             <div class="w-full h-36 flex items-center justify-center mb-3 overflow-hidden">
               <img :src="product.image_url" :alt="product.name" class="h-full object-contain group-hover:scale-110 transition duration-300" @error="(e) => e.target.src = 'https://placehold.co/400x400/FFC107/0000A0?text=' + encodeURIComponent(product.name)" />
             </div>
+            
             <h3 class="font-bold text-sm text-gray-900 leading-tight mb-1 h-10 overflow-hidden">{{ product.name }}</h3>
             <p class="text-[10px] text-gray-500 mb-2 line-clamp-2 h-8">{{ product.description }}</p>
+            
             <div class="mt-auto w-full flex flex-col items-center pt-2 border-t border-gray-100">
               <div class="flex items-center gap-2 mb-2">
                 <span class="font-bold text-lg text-gray-900">S/{{ product.price.toFixed(2) }}</span>
               </div>
-              <button @click="$router.push(`/product/${product.id}`)" class="bg-blue-600 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-700 transition" :aria-label="`Personalizar ${product.name}`">
+              <button 
+                @click="$router.push(`/product/${product.id}`)" 
+                class="bg-blue-600 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-700 transition"
+                :aria-label="`Personalizar ${product.name}`"
+              >
                 <ChevronRight class="w-6 h-6" />
               </button>
             </div>
@@ -188,7 +214,7 @@
         </div>
       </section>
 
-      <!-- SECCIÓN: LONCHERITA -->
+      <!-- SECCIÓN: LONCHERITA POR LA EDUCACIÓN -->
       <section id="loncherita" class="max-w-7xl mx-auto px-4 py-8 w-full mb-12">
         <h2 class="font-bold text-lg text-gray-800 uppercase mb-4 border-l-4 border-blue-600 pl-3">Loncherita por la Educación</h2>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -196,13 +222,19 @@
             <div class="w-full h-36 flex items-center justify-center mb-3 overflow-hidden">
               <img :src="product.image_url" :alt="product.name" class="h-full object-contain group-hover:scale-110 transition duration-300" @error="(e) => e.target.src = 'https://placehold.co/400x400/FFC107/0000A0?text=' + encodeURIComponent(product.name)" />
             </div>
+            
             <h3 class="font-bold text-sm text-gray-900 leading-tight mb-1 h-10 overflow-hidden">{{ product.name }}</h3>
             <p class="text-[10px] text-gray-500 mb-2 line-clamp-2 h-8">{{ product.description }}</p>
+            
             <div class="mt-auto w-full flex flex-col items-center pt-2 border-t border-gray-100">
               <div class="flex items-center gap-2 mb-2">
                 <span class="font-bold text-lg text-gray-900">S/{{ product.price.toFixed(2) }}</span>
               </div>
-              <button @click="$router.push(`/product/${product.id}`)" class="bg-blue-600 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-700 transition" :aria-label="`Personalizar ${product.name}`">
+              <button 
+                @click="$router.push(`/product/${product.id}`)" 
+                class="bg-blue-600 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-700 transition"
+                :aria-label="`Personalizar ${product.name}`"
+              >
                 <ChevronRight class="w-6 h-6" />
               </button>
             </div>
@@ -238,7 +270,8 @@ const banners = [
     price: 'S/28.90',
     link: '/product/3',
     btnText: 'Compra Aquí',
-    img: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=800'
+    img: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=800',
+    alt: 'Promoción Dúo Sabroso: dos hamburguesas A lo Pobre con papas y gaseosas'
   },
   {
     bgClass: 'bg-blue-800',
@@ -251,7 +284,8 @@ const banners = [
     price: '',
     link: '/',
     btnText: 'Descargar',
-    img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600'
+    img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600',
+    alt: 'Descarga la app de Bembos y obtén hamburguesa y papas gratis'
   },
   {
     bgClass: 'bg-[#111]',
@@ -264,7 +298,8 @@ const banners = [
     price: '',
     link: '/',
     btnText: 'Ver Ofertas',
-    img: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=600'
+    img: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=600',
+    alt: 'Cyber Bembos: ofertas exclusivas online'
   }
 ];
 
@@ -299,6 +334,7 @@ onUnmounted(() => {
   clearInterval(autoSlideInterval);
 });
 
+// Categorías con secciones correctas
 const categorias = [
   { name: 'Cyber Bembos', section: 'cyber-bembos' },
   { name: 'Promos Exclusivas', section: 'promos-exclusivas' },
@@ -307,6 +343,7 @@ const categorias = [
   { name: 'Loncherita por la Educación', section: 'loncherita' }
 ];
 
+// Filtros de productos por categoría
 const cyberBembos = computed(() => products.value.filter(p => p.category === 'Recomendados'));
 const promociones = computed(() => products.value.filter(p => p.category === 'Promos Exclusivas'));
 const combos = computed(() => products.value.filter(p => p.category === 'Combos'));

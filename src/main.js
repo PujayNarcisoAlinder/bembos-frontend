@@ -25,6 +25,7 @@ app.use(Toast, {
   icon: true,
   rtl: false,
   containerClassName: 'toast-a11y',
+  toastClassName: 'toast-contrast',
   accessibility: {
     toastRole: 'alert'
   },
