@@ -4,8 +4,20 @@
 
 body {
   font-family: 'Poppins', system-ui, sans-serif;
-  background-color: #FFF8E7;
+  background-color: #FFF8F0;
   margin: 0;
 }
 
-::-webkit-scrollbar { display: none; }
+/* S11: Quitamos el display:none global. Solo ocultamos la barra en el carrusel */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Fuente para el banner */
+.font-handwriting {
+  font-family: 'Brush Script MT', cursive;
+}
