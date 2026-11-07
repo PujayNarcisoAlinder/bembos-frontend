@@ -12,7 +12,6 @@
         <p class="text-2xl font-extrabold text-gray-900 mt-1">BEM-5734</p>
       </div>
 
-      <!-- QR SIMULADO -->
       <div class="mb-6 flex flex-col items-center">
         <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=BEM-5734" alt="Código QR para recoger tu pedido" class="w-32 h-32 rounded-lg border-4 border-white shadow-sm" />
         <p class="text-xs text-gray-500 mt-2">Muestra este QR al recoger</p>
@@ -20,13 +19,25 @@
 
       <p class="text-sm text-gray-700 mb-6 font-medium">Estará listo para recoger en <span class="font-bold text-bembos-blue">{{ sedeRecojo }}</span> en 20 minutos.</p>
 
-      <button @click="mostrarResumen = !mostrarResumen" class="w-full border-2 border-gray-800 rounded-xl py-3 font-bold text-base mb-4 flex items-center justify-center gap-2 hover:bg-gray-50 transition min-h-[48px] focus:ring-2 focus:ring-gray-400">
+      <!-- R6: aria-expanded y aria-controls -->
+      <button 
+        @click="mostrarResumen = !mostrarResumen" 
+        :aria-expanded="mostrarResumen"
+        aria-controls="resumen-pedido"
+        class="w-full border-2 border-gray-800 rounded-xl py-3 font-bold text-base mb-4 flex items-center justify-center gap-2 hover:bg-gray-50 transition min-h-[48px] focus:ring-2 focus:ring-gray-400"
+      >
         {{ mostrarResumen ? 'Ocultar resumen del pedido' : 'Ver resumen del pedido' }}
         <ChevronDown v-if="!mostrarResumen" class="w-5 h-5" aria-hidden="true" />
         <ChevronUp v-else class="w-5 h-5" aria-hidden="true" />
       </button>
 
-      <div v-if="mostrarResumen" class="w-full bg-gray-50 rounded-xl p-4 mb-4 text-left border border-gray-200" role="region" aria-label="Resumen del pedido">
+      <div 
+        v-if="mostrarResumen" 
+        id="resumen-pedido"
+        class="w-full bg-gray-50 rounded-xl p-4 mb-4 text-left border border-gray-200" 
+        role="region" 
+        aria-label="Resumen del pedido"
+      >
         <div v-if="lastOrder">
           <div v-for="item in lastOrder.items" :key="item.id" class="flex justify-between text-sm mb-2 text-gray-700">
             <span>{{ item.quantity }} x {{ item.name }}</span>

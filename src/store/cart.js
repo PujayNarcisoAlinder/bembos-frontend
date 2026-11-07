@@ -22,7 +22,10 @@ export const useCartStore = defineStore('cart', {
     },
     updateItem(updated) {
       const index = this.items.findIndex(i => i.id === updated.id);
-      if (index !== -1) this.items[index] = updated;
+      if (index !== -1) {
+        // R7: Al actualizar, marcamos el item para mostrar el aviso
+        this.items[index] = { ...updated, justEdited: true };
+      }
     },
     clearCart() {
       this.items = [];
