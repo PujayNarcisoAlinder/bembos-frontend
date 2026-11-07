@@ -1,6 +1,5 @@
 <template>
   <div v-if="product" class="min-h-screen bg-bembos-cream pb-40">
-    <!-- Header Azul (S6: botón "Volver" de 44x44) -->
     <header class="bg-bembos-blue p-4 flex items-center gap-3 text-white sticky top-0 z-10 shadow-md">
       <button @click="$router.back()" class="w-11 h-11 flex items-center justify-center -ml-2 focus:ring-2 focus:ring-white rounded-full" aria-label="Volver al menú">
         <ChevronLeft class="w-6 h-6" />
@@ -22,7 +21,7 @@
           Estás editando tu pedido. Tu configuración anterior ya está marcada.
         </div>
 
-        <!-- Stepper (S5: div decorativo fuera del <ol>) -->
+        <!-- Stepper -->
         <div class="relative mb-8 px-2">
           <div class="absolute top-4 left-4 right-4 h-0.5 bg-blue-200 -z-10" aria-hidden="true"></div>
           <ol class="flex justify-between items-center" aria-label="Pasos de personalización">
@@ -61,10 +60,26 @@
               <span class="bg-blue-600 text-white w-6 h-6 rounded-full text-sm flex items-center justify-center" aria-hidden="true">2</span> Papas
             </legend>
             <div class="space-y-3">
-              <label v-for="p in papas" :key="p.name" class="flex items-center justify-between p-4 bg-white rounded-xl border-2 cursor-pointer transition min-h-[44px]" :class="papasSeleccionadas === p.name ? 'border-amber-600 bg-yellow-50' : 'border-gray-500 hover:border-gray-600'">
+              <label 
+                v-for="p in papas" 
+                :key="p.name" 
+                class="flex items-center justify-between p-4 bg-white rounded-xl border-2 transition min-h-[44px]"
+                :class="[
+                  p.disabled ? 'opacity-60 cursor-not-allowed border-gray-300 bg-gray-50' : 'cursor-pointer',
+                  !p.disabled && papasSeleccionadas === p.name ? 'border-amber-600 bg-yellow-50' : '',
+                  !p.disabled && papasSeleccionadas !== p.name ? 'border-gray-500 hover:border-gray-600' : ''
+                ]"
+              >
                 <div class="flex items-center gap-3">
-                  <input type="radio" :value="p.name" v-model="papasSeleccionadas" class="accent-bembos-yellow w-5 h-5" />
-                  <span class="text-base font-medium text-gray-800">{{ p.name }}</span>
+                  <!-- EL CAMBIO CLAVE: :disabled en el input -->
+                  <input 
+                    type="radio" 
+                    :value="p.name" 
+                    v-model="papasSeleccionadas" 
+                    :disabled="p.disabled"
+                    class="accent-bembos-yellow w-5 h-5 disabled:opacity-50" 
+                  />
+                  <span class="text-base font-medium" :class="p.disabled ? 'text-gray-500 line-through' : 'text-gray-800'">{{ p.name }}</span>
                   <span v-if="p.disabled" class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded font-bold border border-red-300">(Agotado en este local)</span>
                 </div>
               </label>
@@ -72,7 +87,7 @@
           </fieldset>
         </div>
 
-        <!-- PASO 3: Salsas (S5: fieldset) -->
+        <!-- PASO 3: Salsas -->
         <div v-if="stepActivo === 3" class="animate-fade-in">
           <fieldset>
             <legend class="font-bold text-bembos-blue mb-3 flex items-center gap-2 text-lg">
@@ -87,7 +102,7 @@
           </fieldset>
         </div>
 
-        <!-- PASO 4: Ingredientes (S5: fieldset) -->
+        <!-- PASO 4: Ingredientes -->
         <div v-if="stepActivo === 4" class="animate-fade-in">
           <fieldset>
             <legend class="font-bold text-bembos-blue mb-2 flex items-center gap-2 text-lg">
@@ -103,7 +118,7 @@
           </fieldset>
         </div>
 
-        <!-- PASO 5: Extras (S5: fieldset) -->
+        <!-- PASO 5: Extras -->
         <div v-if="stepActivo === 5" class="animate-fade-in">
           <fieldset>
             <legend class="font-bold text-bembos-blue mb-3 flex items-center gap-2 text-lg">
@@ -129,7 +144,6 @@
       <div class="max-w-3xl mx-auto">
         
         <div class="flex justify-between items-center mb-4">
-          <!-- S6: Botones de cantidad 44x44 -->
           <div class="flex items-center gap-3 bg-gray-100 border border-gray-500 rounded-full p-1">
             <button @click="cantidad = Math.max(1, cantidad - 1)" class="w-11 h-11 flex items-center justify-center font-bold text-xl rounded-full hover:bg-gray-200 focus:ring-2 focus:ring-bembos-blue" aria-label="Quitar uno">−</button>
             <span class="font-bold text-lg w-6 text-center" aria-live="polite">{{ cantidad }}</span>
@@ -201,7 +215,7 @@ const tamanos = [{ name: 'Cheese mediana, incluida' }, { name: 'Cheese grande, +
 const papas = [
   { name: 'Papas medianas, incluidas', disabled: false }, 
   { name: 'Papas grandes, + S/4.00', disabled: false }, 
-  { name: 'Papas rústicas, + S/4.00', disabled: true }
+  { name: 'Papas rústicas, + S/4.00', disabled: true } // Deshabilitada de verdad
 ];
 const salsas = [{ name: 'Mayonesa' }, { name: 'Ketchup' }, { name: 'Ají' }, { name: 'Salsa Bembos' }];
 const ingredientes = [{ name: 'Sin lechuga' }, { name: 'Sin tomate' }, { name: 'Sin cebolla' }, { name: 'Sin pepinillos' }];
@@ -240,10 +254,12 @@ const precioTotal = computed(() => {
 });
 
 const pasoSiguiente = () => {
+  // Como el input ahora está deshabilitado, no se puede seleccionar.
+  // Pero por si acaso, validamos.
   if (stepActivo.value === 2) {
     const opcionPapas = papas.find(p => p.name === papasSeleccionadas.value);
     if (opcionPapas?.disabled) {
-      toast.warning('Las papas rústicas no están disponibles en este local. Elige otra opción.');
+      toast.warning('Las papas rústicas no están disponibles. Elige otra opción.');
       return;
     }
   }

@@ -2,7 +2,6 @@
   <div class="min-h-screen bg-[#f8f9fa] font-sans text-gray-900 flex flex-col">
     <HeaderBembos />
 
-    <!-- Contenido principal envuelto en <main> (Contrato C2) -->
     <main class="flex-grow">
       
       <!-- BARRA SECUNDARIA -->
@@ -12,7 +11,6 @@
             <MapPin class="w-3 h-3"/> Comienza tu pedido: Elige tu dirección
           </button>
           <div class="hidden md:flex items-center gap-5 text-gray-600">
-            <!-- S8: Botones disabled en lugar de href="#" -->
             <button disabled class="flex items-center gap-1 opacity-60 cursor-not-allowed"><Heart class="w-3 h-3"/> Mis Favoritos</button>
             <button disabled class="flex items-center gap-1 opacity-60 cursor-not-allowed"><Clock class="w-3 h-3"/> Sigue tu pedido</button>
             <button disabled class="flex items-center gap-1 opacity-60 cursor-not-allowed"><MapPin class="w-3 h-3"/> ¿A qué local?</button>
@@ -20,17 +18,14 @@
         </div>
       </div>
 
-      <!-- S4: H1 principal oculto para lectores -->
       <h1 class="sr-only">Menú Bembos</h1>
 
-      <!-- CARRUSEL DE BANNERS (S1: inert, S2: Pausa) -->
+      <!-- CARRUSEL DE BANNERS -->
       <section class="relative w-full overflow-hidden bg-blue-900 h-[280px] md:h-[360px]" aria-roledescription="carrusel" aria-label="Promociones destacadas">
         <div 
           class="flex transition-transform duration-500 ease-in-out h-full"
           :style="{ transform: `translateX(-${currentSlide * 100}%)` }"
         >
-          <!-- Banner 1 -->
-          <!-- S1: :inert y :aria-hidden -->
           <div 
             v-for="(banner, idx) in banners" 
             :key="idx"
@@ -41,7 +36,6 @@
           >
             <div class="max-w-7xl mx-auto px-4 w-full flex h-full">
               <div class="w-1/2 flex flex-col justify-center z-10 pl-4 md:pl-10">
-                <!-- S4: Cambiamos h1 por p -->
                 <p :class="banner.sloganClass">{{ banner.slogan }}</p>
                 <p :class="banner.titleClass" style="text-shadow: 2px 2px 0px #fff;">{{ banner.title }}</p>
                 <div class="mt-4 md:mt-6">
@@ -57,7 +51,6 @@
           </div>
         </div>
 
-        <!-- S3 y S6: Flechas con aria-label y tamaño 44x44 -->
         <button @click="prevSlide" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white text-blue-900 rounded-full w-11 h-11 flex items-center justify-center transition z-20" aria-label="Banner anterior">
           <ChevronLeft class="w-6 h-6"/>
         </button>
@@ -65,12 +58,10 @@
           <ChevronRight class="w-6 h-6"/>
         </button>
 
-        <!-- S2: Botón de pausa -->
         <button @click="togglePausa" class="absolute bottom-3 right-4 bg-white/80 text-blue-900 rounded-full px-3 py-1 text-xs font-bold z-20 min-h-[32px]" :aria-label="pausado ? 'Reanudar el carrusel' : 'Pausar el carrusel'">
           {{ pausado ? '▶ Reanudar' : '⏸ Pausar' }}
         </button>
 
-        <!-- S3 y S6: Dots indicadores con aria-label y 44x44 de área táctil -->
         <div class="absolute bottom-3 left-0 right-0 flex justify-center gap-2 z-20">
           <button 
             v-for="(_, idx) in banners" 
@@ -85,7 +76,7 @@
         </div>
       </section>
 
-      <!-- CÁPSULAS DE CATEGORÍAS (S7: borde gris-500, S11: cada una lleva a un ancla real o hace scroll) -->
+      <!-- CÁPSULAS DE CATEGORÍAS -->
       <section class="bg-white py-4 shadow-sm relative z-10">
         <div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-center gap-3">
           <button v-for="cat in categorias" :key="cat.name"
@@ -108,24 +99,22 @@
               <img :src="product.image_url" :alt="product.name" class="h-full object-contain group-hover:scale-110 transition duration-300" @error="(e) => e.target.src = 'https://placehold.co/400x400/FFC107/0000A0?text=' + encodeURIComponent(product.name)" />
             </div>
             
-            <!-- S4: h4 cambiado a h3 -->
             <h3 class="font-bold text-sm text-gray-900 leading-tight mb-1 h-10 overflow-hidden">{{ product.name }}</h3>
             <p class="text-[10px] text-gray-500 mb-2 line-clamp-2 h-8">{{ product.description }}</p>
             
             <div class="mt-auto w-full flex flex-col items-center pt-2 border-t border-gray-100">
               <div class="flex items-center gap-2 mb-2">
                 <span class="font-bold text-lg text-gray-900">S/{{ product.price.toFixed(2) }}</span>
-                <!-- S7: Precio tachado más oscuro -->
                 <span v-if="product.old_price" class="text-xs text-gray-600 line-through">S/{{ product.old_price.toFixed(2) }}</span>
                 <span v-if="product.discount" class="bg-red-600 text-white text-[10px] font-bold px-1 rounded">{{ product.discount }}%</span>
               </div>
-              <!-- S3: aria-label en el botón + y S6: tamaño 44x44 -->
+              <!-- CAMBIO CLAVE: ChevronRight en lugar de Plus -->
               <button 
                 @click="$router.push(`/product/${product.id}`)" 
                 class="bg-blue-600 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-700 transition"
                 :aria-label="`Personalizar ${product.name}`"
               >
-                <Plus class="w-6 h-6" />
+                <ChevronRight class="w-6 h-6" />
               </button>
             </div>
           </article>
@@ -137,7 +126,6 @@
         <div class="flex justify-between items-end mb-4">
           <h2 class="text-lg font-bold tracking-wide text-gray-800 uppercase">Los Más Vendidos</h2>
           <div class="flex gap-2">
-            <!-- S3: aria-label, S6: 44x44 -->
             <button @click="scrollMasVendidos('left')" class="w-11 h-11 rounded-full border border-gray-500 text-gray-600 flex items-center justify-center hover:bg-gray-200" aria-label="Ver productos anteriores"><ChevronLeft class="w-4 h-4"/></button>
             <button @click="scrollMasVendidos('right')" class="w-11 h-11 rounded-full border border-gray-500 text-gray-600 flex items-center justify-center hover:bg-gray-200" aria-label="Ver más productos"><ChevronRight class="w-4 h-4"/></button>
           </div>
@@ -150,23 +138,21 @@
               <img :src="product.image_url" :alt="product.name" class="h-full object-contain hover:scale-110 transition duration-300" @error="(e) => e.target.src = 'https://placehold.co/400x400/FFC107/0000A0?text=' + encodeURIComponent(product.name)" />
             </div>
             
-            <!-- S4: h3 mantenido en esta sección -->
             <h3 class="font-bold text-sm text-gray-900 leading-tight mb-1 h-10 overflow-hidden">{{ product.name }}</h3>
             <p class="text-[10px] text-gray-500 mb-2 line-clamp-2 h-8">{{ product.description }}</p>
             
             <div class="mt-auto w-full flex flex-col items-center pt-2 border-t border-gray-100">
               <div class="flex items-center justify-center gap-2 mb-2">
                 <span class="font-bold text-lg">S/{{ product.price.toFixed(2) }}</span>
-                <!-- S7: Precio tachado -->
                 <span v-if="product.old_price" class="text-xs text-gray-600 line-through">S/{{ product.old_price.toFixed(2) }}</span>
               </div>
-              <!-- S3: aria-label y S6: 44x44 -->
+              <!-- CAMBIO CLAVE: ChevronRight en lugar de Plus -->
               <button 
                 @click="$router.push(`/product/${product.id}`)" 
                 class="bg-blue-600 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-700 transition"
                 :aria-label="`Personalizar ${product.name}`"
               >
-                <Plus class="w-6 h-6" />
+                <ChevronRight class="w-6 h-6" />
               </button>
             </div>
           </article>
@@ -179,14 +165,13 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { MapPin, Heart, Clock, ChevronLeft, ChevronRight, Plus } from 'lucide-vue-next';
+import { MapPin, Heart, Clock, ChevronLeft, ChevronRight } from 'lucide-vue-next';
 import { getProducts } from '../services/api';
 import HeaderBembos from '../components/HeaderBembos.vue';
 
 const products = ref([]);
 const carouselMasVendidos = ref(null);
 
-// S2: Lógica del carrusel con pausa
 const currentSlide = ref(0);
 let autoSlideInterval;
 const pausado = ref(false);
@@ -260,7 +245,6 @@ onUnmounted(() => {
   clearInterval(autoSlideInterval);
 });
 
-// S11: Categorías con secciones reales
 const categorias = [
   { name: 'Cyber Bembos', section: 'hamburguesas' },
   { name: 'Las del Barrio', section: 'hamburguesas' },
