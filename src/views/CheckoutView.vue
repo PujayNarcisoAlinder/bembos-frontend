@@ -21,30 +21,30 @@
       <div class="bg-white rounded-2xl p-5 shadow-sm">
         <h2 class="font-bold text-lg mb-3 text-gray-900">Método de entrega</h2>
         <div class="flex gap-3 mb-5">
-          <button @click="tipoEntrega = 'delivery'" :class="['flex-1 border-2 rounded-xl p-4 flex items-center justify-center gap-2 text-sm font-semibold transition min-h-[52px]', tipoEntrega === 'delivery' ? 'bg-yellow-50 border-bembos-yellow text-bembos-black' : 'border-gray-300 text-gray-700 hover:bg-gray-50']">
+          <button @click="tipoEntrega = 'delivery'" :class="['flex-1 border-2 rounded-xl p-4 flex items-center justify-center gap-2 text-sm font-semibold transition min-h-[52px]', tipoEntrega === 'delivery' ? 'bg-yellow-50 border-amber-600 text-bembos-black' : 'border-gray-500 text-gray-700 hover:bg-gray-50']">
             Delivery
           </button>
-          <button @click="tipoEntrega = 'local'" :class="['flex-1 border-2 rounded-xl p-4 flex items-center justify-center gap-2 text-sm font-semibold transition min-h-[52px]', tipoEntrega === 'local' ? 'bg-yellow-50 border-bembos-yellow text-bembos-black' : 'border-gray-300 text-gray-700 hover:bg-gray-50']">
+          <button @click="tipoEntrega = 'local'" :class="['flex-1 border-2 rounded-xl p-4 flex items-center justify-center gap-2 text-sm font-semibold transition min-h-[52px]', tipoEntrega === 'local' ? 'bg-yellow-50 border-amber-600 text-bembos-black' : 'border-gray-500 text-gray-700 hover:bg-gray-50']">
             Recojo en local
           </button>
         </div>
 
         <div v-if="tipoEntrega === 'delivery'" class="space-y-4">
           <div>
-            <label for="nombre-delivery" class="text-sm font-bold text-gray-800">Nombre <span class="text-red-500">*</span></label>
+            <label for="nombre-delivery" class="text-sm font-bold text-gray-800">Nombre <span class="text-red-700">*</span></label>
             <input id="nombre-delivery" v-model="nombre" autocomplete="name" aria-required="true"
               :aria-invalid="errores.nombre ? 'true' : undefined"
               :aria-describedby="errores.nombre ? 'err-nombre-delivery' : undefined"
-              :class="['w-full border-2 rounded-lg p-3 text-base mt-1 outline-none focus:border-bembos-blue focus:ring-2 focus:ring-blue-200', errores.nombre ? 'border-red-700' : 'border-gray-300']"
+              :class="['w-full border-2 rounded-lg p-3 text-base mt-1 outline-none placeholder:text-gray-600 focus:border-bembos-blue focus:ring-2 focus:ring-blue-200', errores.nombre ? 'border-red-700' : 'border-gray-500']"
               placeholder="Ej. Frank Vidal" />
             <p v-if="errores.nombre" id="err-nombre-delivery" class="text-sm text-red-700 mt-1">{{ errores.nombre }}</p>
           </div>
           <div>
-            <label for="direccion-delivery" class="text-sm font-bold text-gray-800">Dirección de entrega <span class="text-red-500">*</span></label>
+            <label for="direccion-delivery" class="text-sm font-bold text-gray-800">Dirección de entrega <span class="text-red-700">*</span></label>
             <input id="direccion-delivery" v-model="direccion" autocomplete="street-address" aria-required="true"
               :aria-invalid="errores.direccion ? 'true' : undefined"
               :aria-describedby="errores.direccion ? 'err-direccion' : undefined"
-              :class="['w-full border-2 rounded-lg p-3 text-base mt-1 outline-none focus:border-bembos-blue focus:ring-2 focus:ring-blue-200', errores.direccion ? 'border-red-700' : 'border-gray-300']"
+              :class="['w-full border-2 rounded-lg p-3 text-base mt-1 outline-none placeholder:text-gray-600 focus:border-bembos-blue focus:ring-2 focus:ring-blue-200', errores.direccion ? 'border-red-700' : 'border-gray-500']"
               placeholder="Av. Ejemplo 123, Lima" />
             <p v-if="errores.direccion" id="err-direccion" class="text-sm text-red-700 mt-1">{{ errores.direccion }}</p>
           </div>
@@ -52,17 +52,17 @@
 
         <div v-if="tipoEntrega === 'local'" class="space-y-4">
           <div>
-            <label for="nombre-local" class="text-sm font-bold text-gray-800">Nombre <span class="text-red-500">*</span></label>
+            <label for="nombre-local" class="text-sm font-bold text-gray-800">Nombre <span class="text-red-700">*</span></label>
             <input id="nombre-local" v-model="nombre" autocomplete="name" aria-required="true"
               :aria-invalid="errores.nombre ? 'true' : undefined"
               :aria-describedby="errores.nombre ? 'err-nombre-local' : undefined"
-              :class="['w-full border-2 rounded-lg p-3 text-base mt-1 outline-none focus:border-bembos-blue focus:ring-2 focus:ring-blue-200', errores.nombre ? 'border-red-700' : 'border-gray-300']"
+              :class="['w-full border-2 rounded-lg p-3 text-base mt-1 outline-none placeholder:text-gray-600 focus:border-bembos-blue focus:ring-2 focus:ring-blue-200', errores.nombre ? 'border-red-700' : 'border-gray-500']"
               placeholder="Ej. Frank Vidal" />
             <p v-if="errores.nombre" id="err-nombre-local" class="text-sm text-red-700 mt-1">{{ errores.nombre }}</p>
           </div>
           <div>
             <label for="sede-local" class="text-sm font-bold text-gray-800">Selecciona la sede de recojo</label>
-            <select id="sede-local" v-model="sedeSeleccionada" class="w-full border-2 border-gray-300 rounded-lg p-3 text-base mt-1 outline-none bg-white focus:border-bembos-blue focus:ring-2 focus:ring-blue-200">
+            <select id="sede-local" v-model="sedeSeleccionada" class="w-full border-2 border-gray-500 rounded-lg p-3 text-base mt-1 outline-none bg-white focus:border-bembos-blue focus:ring-2 focus:ring-blue-200">
               <option v-for="sede in sedes" :key="sede" :value="sede">{{ sede }}</option>
             </select>
           </div>
@@ -91,7 +91,7 @@
             <input id="card-number" v-model="cardNumber" @input="formatCardNumber" maxlength="19"
               :aria-invalid="errores.cardNumber ? 'true' : undefined"
               :aria-describedby="errores.cardNumber ? 'err-card-number' : undefined"
-              :class="['w-full border-2 rounded-lg p-3 text-base mt-1 outline-none focus:border-bembos-blue focus:ring-2 focus:ring-blue-200', errores.cardNumber ? 'border-red-700' : 'border-gray-300']"
+              :class="['w-full border-2 rounded-lg p-3 text-base mt-1 outline-none placeholder:text-gray-600 focus:border-bembos-blue focus:ring-2 focus:ring-blue-200', errores.cardNumber ? 'border-red-700' : 'border-gray-500']"
               placeholder="0000 0000 0000 0000" />
             <p v-if="errores.cardNumber" id="err-card-number" class="text-sm text-red-700 mt-1">{{ errores.cardNumber }}</p>
           </div>
@@ -101,7 +101,7 @@
               <input id="card-expiry" v-model="cardExpiry" @input="formatExpiry" maxlength="5"
                 :aria-invalid="errores.cardExpiry ? 'true' : undefined"
                 :aria-describedby="errores.cardExpiry ? 'err-card-expiry' : undefined"
-                :class="['w-full border-2 rounded-lg p-3 text-base mt-1 outline-none focus:border-bembos-blue focus:ring-2 focus:ring-blue-200', errores.cardExpiry ? 'border-red-700' : 'border-gray-300']"
+                :class="['w-full border-2 rounded-lg p-3 text-base mt-1 outline-none placeholder:text-gray-600 focus:border-bembos-blue focus:ring-2 focus:ring-blue-200', errores.cardExpiry ? 'border-red-700' : 'border-gray-500']"
                 placeholder="MM/AA" />
               <p v-if="errores.cardExpiry" id="err-card-expiry" class="text-sm text-red-700 mt-1">{{ errores.cardExpiry }}</p>
             </div>
@@ -110,7 +110,7 @@
               <input id="card-cvv" v-model="cardCvv" type="password" maxlength="4"
                 :aria-invalid="errores.cardCvv ? 'true' : undefined"
                 :aria-describedby="errores.cardCvv ? 'err-card-cvv' : undefined"
-                :class="['w-full border-2 rounded-lg p-3 text-base mt-1 outline-none focus:border-bembos-blue focus:ring-2 focus:ring-blue-200', errores.cardCvv ? 'border-red-700' : 'border-gray-300']"
+                :class="['w-full border-2 rounded-lg p-3 text-base mt-1 outline-none placeholder:text-gray-600 focus:border-bembos-blue focus:ring-2 focus:ring-blue-200', errores.cardCvv ? 'border-red-700' : 'border-gray-500']"
                 placeholder="123" />
               <p v-if="errores.cardCvv" id="err-card-cvv" class="text-sm text-red-700 mt-1">{{ errores.cardCvv }}</p>
             </div>
