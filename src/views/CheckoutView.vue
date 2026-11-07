@@ -29,6 +29,8 @@
           </button>
         </div>
 
+        <p class="text-sm text-gray-700 mb-3">Los campos marcados con <span class="text-red-700">*</span> son obligatorios.</p>
+
         <div v-if="tipoEntrega === 'delivery'" class="space-y-4">
           <div>
             <label for="nombre-delivery" class="text-sm font-bold text-gray-800">Nombre <span class="text-red-700">*</span></label>

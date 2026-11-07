@@ -13,7 +13,7 @@ app.use(router);
 
 app.use(Toast, {
   position: 'top-center',
-  timeout: 3000,
+  timeout: 10000, // 2.2.1: 3000 ms no dan tiempo a leer el mensaje
   closeOnClick: true,
   pauseOnFocusLoss: true,
   pauseOnHover: true,
@@ -29,8 +29,9 @@ app.use(Toast, {
     closeButtonLabel: 'Cerrar mensaje'
   },
   toastDefaults: {
-    error: { accessibility: { toastRole: 'alert', closeButtonLabel: 'Cerrar mensaje de error' } },
-    warning: { accessibility: { toastRole: 'alert', closeButtonLabel: 'Cerrar advertencia' } },
+    // 2.2.1: los errores no se cierran solos; los cierra el usuario.
+    error: { timeout: false, accessibility: { toastRole: 'alert', closeButtonLabel: 'Cerrar mensaje de error' } },
+    warning: { timeout: false, accessibility: { toastRole: 'alert', closeButtonLabel: 'Cerrar advertencia' } },
     success: { accessibility: { toastRole: 'status', closeButtonLabel: 'Cerrar mensaje' } },
     info: { accessibility: { toastRole: 'status', closeButtonLabel: 'Cerrar mensaje' } }
   }
